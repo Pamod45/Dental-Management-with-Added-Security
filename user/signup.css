@@ -1,0 +1,52 @@
+.mycontainer {
+  margin-top: 100px;
+  margin-bottom: 100px;
+  margin-left: 250px;
+  margin-right: 250px;
+  width: auto;
+  border: solid 1px grey;
+  border-radius: 5px;
+}
+
+.title {
+  font-size: 36px;
+  text-align: center;
+  margin-top: 50px;
+  font-weight: 600;
+}
+
+.description {
+  font-size: 24px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.cont {
+  margin: 25px;
+}
+.myrow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.child {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.childspan {
+  grid-column: 1/3;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.text {
+  font-size: 18px;
+  text-align: center;
+  margin-top: 15px;
+}
+
+input{
+    background-color: #F8F9FA!important;
+}
+
+button{
+    background-color: #0F376B!important;
+}
