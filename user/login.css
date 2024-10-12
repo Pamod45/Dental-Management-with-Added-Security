@@ -41,3 +41,21 @@ body{
 #btnlogin:hover{
     background-color: #145fc1;
 }
+
+.captcha{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.lock-message{
+    display: none;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color:red;
+    font-weight: bold;
+}

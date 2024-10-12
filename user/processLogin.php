@@ -1,0 +1,92 @@
+<?php
+require("../config/dbconnection.php");
+
+if (!session_id()) session_start();
+
+$maxAttempts = 3; // Max allowed attempts
+$lockoutTime = 30; // Lockout time in seconds
+
+if (!isset($_SESSION['attempts'])) {
+    $_SESSION['attempts'] = 0;
+}
+
+if (!isset($_SESSION['lockout_time'])) {
+    $_SESSION['lockout_time'] = 0;
+}
+
+// Check if user is currently locked out
+if ($_SESSION['lockout_time'] > time()) {
+    echo json_encode(['success' => false, 'message' => 'Your account is locked. Please try again in ' . ($_SESSION['lockout_time'] - time()) . ' seconds.']);
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    // Check reCAPTCHA response
+    $recaptchaSecret = '6LekfF8qAAAAAJbchVG_vTMi2m__06WZFgNRZmeu'; // Replace with your actual secret key
+    $recaptchaResponse = $_POST['g-recaptcha-response'];
+
+    // Verify the reCAPTCHA response
+    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse");
+    $responseKeys = json_decode($response, true);
+
+    if (intval($responseKeys["success"]) !== 1) {
+        // reCAPTCHA validation failed
+        echo json_encode(['success' => false, 'message' => 'Please confirm you are not a robot.']);
+        exit();
+    }
+
+    // reCAPTCHA passed, proceed with username and password validation
+    $username = trim(htmlentities($_POST['txtusername']));
+    $password = trim(htmlentities($_POST['txtpassword']));
+
+    // Use prepared statements to prevent SQL injection
+    $query = $con->prepare("SELECT * FROM user WHERE userid = ? AND password = ?");
+    $query->bind_param("ss", $username, $password);
+    $query->execute();
+    $result = $query->get_result();
+
+    if ($result->num_rows == 1) {
+
+        $_SESSION['attempts'] = 0;
+        $_SESSION['lockout_time'] = 0;
+
+        $row = $result->fetch_assoc();
+        $_SESSION['userid'] = $row['userid'];
+        $_SESSION['registereddate'] = $row['registereddate'];
+        $_SESSION['usertype'] = $row['usertype'];
+        $_SESSION['authenticated'] = true;
+
+        // Prepare redirect URL based on user type
+        $redirectUrl = '';
+        switch ($row['usertype']) {
+            case "Patient":
+                $redirectUrl = '../PatientUI/dashboard.php';
+                break;
+            case "Doctor":
+                $redirectUrl = '../doctor/dashboard.php';
+                break;
+            case "Employee":
+                $query2 = "SELECT (SELECT Position FROM employee_type WHERE emptypeid=e.emptypeid) AS position FROM pdms.employee e WHERE userid=?";
+                $query2Stmt = $con->prepare($query2);
+                $query2Stmt->bind_param("s", $username);
+                $query2Stmt->execute();
+                $result2 = $query2Stmt->get_result();
+                $row2 = $result2->fetch_assoc();
+                $redirectUrl = ($row2['position'] == "CounterStaff") ? '../Employee/dashboard.php' : '../branchManagerUI/dashboard.php';
+                break;
+        }
+
+        echo json_encode(['success' => true, 'redirectUrl' => $redirectUrl]);
+    } else {
+        $_SESSION['attempts']++;
+
+        if ($_SESSION['attempts'] >= $maxAttempts) {
+            $_SESSION['lockout_time'] = time() + $lockoutTime; // Set lockout time
+            echo json_encode(['success' => false, 'message' => 'Too many failed attempts. Please try again in 30 seconds.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid username or password. You have '. ($maxAttempts - $_SESSION['attempts']) .' attempts left.']);
+        }
+    }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+}
