@@ -1,0 +1,6 @@
+projectKey=SoftwareSecurityDentalManagement
+serverUrl=http://localhost:9000
+serverVersion=10.7.0.96327
+dashboardUrl=http://localhost:9000/dashboard?id=SoftwareSecurityDentalManagement
+ceTaskId=d338debf-4537-4661-be95-8d274fb362a8
+ceTaskUrl=http://localhost:9000/api/ce/task?id=d338debf-4537-4661-be95-8d274fb362a8
