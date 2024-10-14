@@ -1,70 +1,130 @@
 <?php
-require("../config/dbconnection.php");
-if (isset($_POST['register'])) {
 
+require("../config/dbconnection.php");
+require("../vendor/autoload.php"); // Include your Monolog autoload
+
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+$log = new Logger('registration_log');
+$log->pushHandler(new StreamHandler('../logs/registration.log', Logger::DEBUG));
+
+if (isset($_POST['register'])) {
     $con->begin_transaction();
 
     try {
 
+        // Check reCAPTCHA response
+        $recaptchaSecret = '6LekfF8qAAAAAJbchVG_vTMi2m__06WZFgNRZmeu'; // Replace with your actual secret key
+        $recaptchaResponse = $_POST['g-recaptcha-response'];
+
+        // Verify the reCAPTCHA response
+        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse");
+        $responseKeys = json_decode($response, true);
+
+        if (intval($responseKeys["success"]) !== 1) {
+            // reCAPTCHA validation failed
+            echo json_encode(['success' => false, 'message' => 'Please confirm you are not a robot.']);
+            exit();
+        }
+
+        // Input sanitization
+        $password = $con->real_escape_string($_POST['password']);
+        $confirmPassword = $con->real_escape_string($_POST['confirm_password']); // Capture the confirm password
+        $usertype = 'Patient';
+        $registereddate = date('Y-m-d');
+        $loginstatus = 0;
+
+        // Check if password and confirm password match
+        if ($password !== $confirmPassword) {
+            throw new Exception("Passwords do not match.");
+        }
+
+        // Check password complexity: minimum 8 and maximum 20 characters,
+        // at least one uppercase letter, one lowercase letter, one special character, and one number
+        if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[0-9]).{8,20}$/', $password)) {
+            throw new Exception("Password must be 8-20 characters long, contain at least one uppercase letter, one lowercase letter, one special character, and one number.");
+        }
+
+        // Password hashing with salt
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        // Retrieve max user ID
         $query_userid = "SELECT MAX(userid) as max_userid FROM user";
         $result_userid = $con->query($query_userid);
         $row_userid = $result_userid->fetch_assoc();
         $max_userid = $row_userid['max_userid'];
 
-        if($max_userid==NULL)
-            $next_userid = 'U0001';
-        else
-            $next_userid = 'U' . sprintf('%04d', substr($max_userid, 1) + 1);
+        // Generate the next user ID
+        $next_userid = $max_userid ? 'U' . sprintf('%04d', substr($max_userid, 1) + 1) : 'U0001';
 
-        $password = $con->real_escape_string($_POST['password']);
-        $usertype = 'Patient';
-        $registereddate = date('Y-m-d');
-        $loginstatus = 0;
+        // Sanitize other input fields
+        $dob = $con->real_escape_string($_POST['dob']);
+        $firstname = $con->real_escape_string($_POST['fname']);
+        $lastname = $con->real_escape_string($_POST['lname']);
+        $email = $con->real_escape_string($_POST['email']);
+        $address = $con->real_escape_string($_POST['address']);
+        $contactno = $con->real_escape_string($_POST['contact']);
 
-        $insert_query_user = "INSERT INTO user (userid, password, usertype, registereddate, loginstatus) 
-                             VALUES ('$next_userid', '$password', '$usertype', '$registereddate', $loginstatus)";
-
-
-        if (!$con->query($insert_query_user)) {
-            throw new Exception("Error while inserting");
+        // Validate inputs with regex
+        if (!preg_match("/^[a-zA-Z]{1,30}$/", $firstname)) {
+            throw new Exception("Invalid first name. Must contain only letters and be one word not greater than 30 characters.");
+        }
+        if (!preg_match("/^[a-zA-Z]{1,30}$/", $lastname)) {
+            throw new Exception("Invalid last name. Must contain only letters and be one word not greater than 30 characters.");
+        }
+        if (strlen($address) > 100) {
+            throw new Exception("Address should be less than 100 characters.");
+        }
+        // Validate contact number
+        if (!preg_match("/^\+94\d{9}$|^0\d{9}$/", $contactno)) {
+            throw new Exception("Invalid contact number. It should be in the format +94XXXXXXXXX or 0XXXXXXXXX.");
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Invalid email address.");
         }
 
+        // Prepare the SQL statement for user insertion
+        $insert_query_user = $con->prepare("INSERT INTO user (userid, password, usertype, registereddate, loginstatus) 
+                                            VALUES (?, ?, ?, ?, ?)");
+        $insert_query_user->bind_param('ssssi', $next_userid, $hashedPassword, $usertype, $registereddate, $loginstatus);
 
+        if (!$insert_query_user->execute()) {
+            throw new Exception("Error while inserting user.");
+        }
+
+        // Retrieve max patient ID
         $query_patientid = "SELECT MAX(patientid) as max_patientid FROM patient";
         $result_patientid = $con->query($query_patientid);
         $row_patientid = $result_patientid->fetch_assoc();
         $max_patientid = $row_patientid['max_patientid'];
 
-        if($max_patientid==NULL)
-            $next_patientid = 'P0001';
-        else
-            $next_patientid = 'P' . sprintf('%04d', substr($max_patientid, 1) + 1);
+        // Generate the next patient ID
+        $next_patientid = $max_patientid ? 'P' . sprintf('%04d', substr($max_patientid, 1) + 1) : 'P0001';
 
-        $dob = $_POST['dob'];
-        $firstname = $_POST['fname'];
-        $lastname = $_POST['lname'];
-        $email = $_POST['email'];
-        $address = $_POST['address'];
-        $contactno = $_POST['contact'];
+        // Prepare the SQL statement for patient insertion
+        $insert_query_patient = $con->prepare("INSERT INTO patient (userid, patientid, dob, firstname, lastname, email, address, contactno) 
+                                               VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $insert_query_patient->bind_param('ssssssss', $next_userid, $next_patientid, $dob, $firstname, $lastname, $email, $address, $contactno);
 
-        $insert_query_patient = "INSERT INTO patient (userid, patientid, dob, firstname, lastname, email, address, contactno) 
-                                 VALUES ('$next_userid', '$next_patientid', '$dob', '$firstname', '$lastname', '$email', '$address', '$contactno')";
+        // Execute the INSERT query for the patient table
+        if (!$insert_query_patient->execute()) {
+            throw new Exception("Error while inserting patient.");
+        }
 
-        // Execute the INSERT query for patient table
-        if (!$con->query($insert_query_patient))
-            throw new Exception("Error while inserting");
-
-        // If all steps are successful, commit the transaction
+        // Commit the transaction
         $con->commit();
-        echo json_encode($next_userid);
+        $log->info("User $next_userid registered successfully.");
+        echo json_encode(['success' => true, 'userid' => $next_userid]);
     } catch (Exception $e) {
-        // If any step fails, roll back the transaction
+        // Roll back the transaction in case of error
         $con->rollback();
-        echo "Registration Failed: " . $e->getMessage();
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -84,210 +144,136 @@ if (isset($_POST['register'])) {
 
 <body>
     <div class="mycontainer">
-        <div class="title">
-            Sign Up
-        </div>
-        <div class="description">
-            Create your own account
-        </div>
-
+        <div class="title">Sign Up</div>
+        <div class="description">Create your own account</div>
 
         <div class="cont">
             <div class="myrow">
                 <div class="mb-3 child">
-                    <input type="text" class="form-control" id="fname" placeholder="firstname">
+                    <input type="text" class="form-control" id="fname" placeholder="First Name" required>
                 </div>
                 <div class="mb-3 child">
-                    <input type="text" class="form-control" id="lname" placeholder="lastname">
+                    <input type="text" class="form-control" id="lname" placeholder="Last Name" required>
                 </div>
             </div>
             <div class="myrow">
                 <div class="mb-3 child">
-                    <input type="text" class="form-control" id="contact" placeholder="phone number">
+                    <input type="tel" class="form-control" id="contact" placeholder="Phone Number" required pattern="[0-9]{10}">
                 </div>
                 <div class="mb-3 child">
-                    <input type="text" class="form-control" id="email" placeholder="email">
+                    <input type="email" class="form-control" id="email" placeholder="Email" required>
+                </div>
+            </div>
+            <div class="myrow">
+                <div class="mb-3 child">
+                    <input type="date" class="form-control" id="dob" required>
+                </div>
+                <div class="mb-3 child">
+                    <input type="text" class="form-control" id="address" placeholder="Address" required>
+                </div>
+            </div>
+            <div class="myrow">
+                <div class="mb-3 child">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                </div>
+                <div class="mb-3 child">
+                    <input type="password" class="form-control" id="confirmpassword" placeholder="Confirm Password" required>
                 </div>
             </div>
 
             <div class="myrow">
-                <div class="mb-3 child">
-                    <input type="text" class="form-control" onfocus="(this.type='date')" onblur="(this.type='text')" id="dob" placeholder="date of birth">
-                </div>
-                <div class="mb-3 child">
-                    <input type="text" class="form-control" id="address" placeholder="address">
+                <div class="childspan">
+                    <div class="g-recaptcha" data-sitekey="6LekfF8qAAAAABkon6_TgQ282coDEkVPWccpwi3I"></div>
                 </div>
             </div>
 
-            <div class="myrow">
-                <div class="mb-3 child">
-                    <input type="password" class="form-control" id="password" placeholder="password">
-                </div>
-                <div class="mb-3 child">
-                    <input type="password" class="form-control" id="confirmpassword" placeholder="confirm password">
-                </div>
-            </div>
             <div class="myrow">
                 <button class="childspan btn btn-primary" id="registerButton">Register</button>
             </div>
             <div class="myrow">
                 <div class="childspan text">
-                    Already have an account ? <a href="login.php">Login</a>
+                    Already have an account? <a href="login.php">Login</a>
                 </div>
-                </divclass>
-
             </div>
-
         </div>
+    </div>
 
-</body>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-<script>
-    $(document).ready(function() {
-        $("#registerButton").click(function() {
+    <script>
+        $(document).ready(function () {
+            $("#registerButton").click(function () {
+                // Get values from input fields
+                var fname = $("#fname").val();
+                var lname = $("#lname").val();
+                var contact = $("#contact").val();
+                var email = $("#email").val();
+                var dob = $("#dob").val();
+                var address = $("#address").val();
+                var password = $("#password").val();
+                var confirmpassword = $("#confirmpassword").val();
+                var captchaResponse = grecaptcha.getResponse(); // Get CAPTCHA response
 
-            // Get values from input fields
-            var fname = $("#fname").val();
-            var lname = $("#lname").val();
-            var contact = $("#contact").val();
-            var email = $("#email").val();
-            var dob = $("#dob").val();
-            var address = $("#address").val();
-            var password = $("#password").val();
-            var confirmpassword = $("#confirmpassword").val();
-
-            // Basic verification
-            if (fname.trim() === '' || !/^[a-zA-Z]+$/.test(fname)) {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Please enter a valid first name.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
-
-            if (lname.trim() === '' || !/^[a-zA-Z]+$/.test(lname)) {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Please enter a valid last name.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
-
-            if (contact.trim() === '' || !/^\d{10,12}$/.test(contact)) {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Please enter a valid contact number (10 digits).",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
-
-            if (email.trim() === '' || !isValidEmail(email)) {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Please enter a valid email address.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
-
-            if (dob.trim() === '') {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Please enter your date of birth.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
-
-            if (address.trim() === '') {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Please enter your address.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
-
-            if (password.trim() === '') {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Please enter a password.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
-
-            if (password !== confirmpassword) {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Passwords and confirm password do not match.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-                return;
-            }
-
-            $.ajax({
-                url: "signup.php", // Replace with your backend endpoint
-                type: "POST",
-                data: {
-                    register: true,
-                    fname: fname,
-                    lname: lname,
-                    contact: contact,
-                    email: email,
-                    dob: dob,
-                    address: address,
-                    password: password
-                },
-                success: function(response) {
-                    if (!response.includes("Failed")) {
-                        Swal.fire({
-                            title: "Registration Successful!",
-                            text: `You have successfully registered.Your user id is ${response}. Use this to log in next time`,
-                            icon: "success",
-                            confirmButtonText: "OK"
-                        }).then(function() {
-                            window.location.href = "login.php";
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Registration Failed!",
-                            text: response,
-                            icon: "error",
-                            confirmButtonText: "OK"
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
+                // Validate required fields
+                if (fname === "" || lname === "" || contact === "" || email === "" || dob === "" || address === "" || password === "" || confirmpassword === "") {
                     Swal.fire({
-                        title: "Error!",
-                        text: "An error occurred while registering. Please try again later.",
-                        icon: "error",
-                        confirmButtonText: "OK"
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'All fields are required!',
                     });
+                    return;
                 }
+
+                // AJAX request to register the user
+                $.ajax({
+                    url: "signup.php",
+                    method: "POST",
+                    data: {
+                        fname: fname,
+                        lname: lname,
+                        contact: contact,
+                        email: email,
+                        dob: dob,
+                        address: address,
+                        password: password,
+                        confirm_password: confirmpassword, // Corrected variable name
+                        'g-recaptcha-response': captchaResponse, // Include reCAPTCHA response
+                        register:true
+                    },
+                    success: function (data) {
+                        var response = JSON.parse(data);
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Registration Successful',
+                                text: 'You can now log in!',
+                            }).then(() => {
+                                window.location.href = 'login.php'; // Redirect after successful registration
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Registration Failed',
+                                text: response.message,
+                            });
+                            grecaptcha.reset();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Registration Failed',
+                            text: error,
+                        });
+                        grecaptcha.reset();
+                    }
+                });
+
             });
         });
-    });
-
-
-    function isValidEmail(email) {
-        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailPattern.test(email);
-    }
-</script>
+    </script>
+</body>
 
 </html>

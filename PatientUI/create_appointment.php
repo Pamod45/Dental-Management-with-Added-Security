@@ -1,6 +1,17 @@
 <?php
+include_once 'auth.php';
 require("../config/dbconnection.php");
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Allow only POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: ../Errors/error.php?code=403&message=No permission allowed");
+    exit();
+}
+
+
 // Fetch data from POST request
 $doctorId = $_POST['doctorId'];
 $appointmentDate = $_POST['appointmentDate'];

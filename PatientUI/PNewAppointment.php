@@ -1,5 +1,5 @@
 <?php
-
+include_once 'auth.php';
 require("../config/dbconnection.php");
 $query = "SELECT MAX(appointmentid) AS max_id FROM appointment";
 $result = $con->query($query);

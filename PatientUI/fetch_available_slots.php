@@ -1,6 +1,11 @@
 <?php
+include_once 'auth.php';
 require("../config/dbconnection.php");
-
+// Allow only POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: ../Errors/error.php?code=403&message=No permission allowed");
+    exit();
+}
 
 $date = $_POST['date'];
 $doctorid = $_POST['doctorid'];

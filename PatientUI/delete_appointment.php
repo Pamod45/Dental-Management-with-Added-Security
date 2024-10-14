@@ -1,5 +1,11 @@
 <?php
+include_once 'auth.php';
 
+// Allow only POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: ../Errors/error.php?code=403&message=No permission allowed");
+    exit();
+}
 // Include your database connection file
 require("../config/dbconnection.php");
 

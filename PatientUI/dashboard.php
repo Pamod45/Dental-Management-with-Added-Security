@@ -1,7 +1,10 @@
 <?php
+include_once 'auth.php';
 require("../config/dbconnection.php");
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $username = $_SESSION['userid'];
 $query5 = "SELECT * FROM patient WHERE userid = '$username'";
 $result5 = $con->query($query5);

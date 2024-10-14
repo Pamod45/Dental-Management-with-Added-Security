@@ -1,7 +1,9 @@
 <?php
-
+include_once 'auth.php';
 require("../config/dbconnection.php");
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $patientid = $_SESSION['patientid'];
 
 if (isset($_POST['password'])) {

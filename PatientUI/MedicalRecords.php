@@ -1,7 +1,9 @@
 <?php
+include_once 'auth.php';
 // Start the session
-session_start();
-
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // Include database connection
 require("../config/dbconnection.php");
 
@@ -120,36 +122,6 @@ $result = $con->query($query);
                 }
             }
             ?>
-            <!-- <div class="medicalRecord">
-                <p class="dateTime">Date :2024/02/17 Time :02:30PM</p>
-                <p>Record ID :MR003</p>
-                <p class="doctorName">Consulted Doctor:Dr. Silva</p>
-                <p>Presenting Complaints :Decaying Tooth</p>
-                <p>Treatments :Removing Tooth</p>
-                <p>Special Notes :Having skin allergy</p>
-                <button class="btn btn-primary btn-sm viewPrescription">View Prescription</button>
-                <button class="btn btn-primary btn-sm downloadPDF">Download As PDF</button>
-            </div>
-            <div class="medicalRecord">
-                <p class="dateTime">Date :2023/12/09 Time :02:30PM</p>
-                <p>Record ID :MR003</p>
-                <p class="doctorName">Consulted Doctor:Dr. Pamod</p>
-                <p>Presenting Complaints :Decaying Tooth</p>
-                <p>Treatments :Removing Tooth</p>
-                <p>Special Notes :Having skin allergy</p>
-                <button class="btn btn-primary btn-sm viewPrescription">View Prescription</button>
-                <button class="btn btn-primary btn-sm downloadPDF">Download As PDF</button>
-            </div>
-            <div class="medicalRecord">
-                <p class="dateTime">Date :2023/06/18 Time :02:30PM</p>
-                <p>Record ID :MR003</p>
-                <p class="doctorName">Consulted Doctor:Dr. Nuwan</p>
-                <p>Presenting Complaints :Decaying Tooth</p>
-                <p>Treatments :Removing Tooth</p>
-                <p>Special Notes :Having skin allergy</p>
-                <button class="btn btn-primary btn-sm viewPrescription">View Prescription</button>
-                <button class="btn btn-primary btn-sm downloadPDF">Download As PDF</button>
-            </div> -->
         </div>
     </div>
 

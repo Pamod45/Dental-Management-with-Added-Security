@@ -1,3 +1,7 @@
+<?php
+include_once 'auth.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -282,7 +286,7 @@
 
     function fillTable() {
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "fetch_appointments.php", // Update the URL to your backend script
             success: function(appointmentsJSON) {
                 // Parse the JSON response

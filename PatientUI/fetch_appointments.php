@@ -1,19 +1,17 @@
 <?php
-
+include_once 'auth.php';
+// Allow only POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: ../Errors/error.php?code=403&message=No permission allowed");
+    exit();
+}
 // Include your database connection file
 require("../config/dbconnection.php");
 
 // Start a session if not already started
-if (!session_id()) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-// Check if the user is logged in
-if (!isset($_SESSION['userid'])) {
-    // Redirect or handle unauthorized access
-    exit("Unauthorized access");
-}
-
 // Get the current patient's ID from the session
 $patientId = $_SESSION['patientid'];
 

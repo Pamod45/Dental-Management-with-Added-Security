@@ -1,0 +1,7 @@
+[2024-10-14T16:44:23.168228+00:00] registration_log.ERROR: Password must be 8-20 characters long, contain at least one uppercase letter, one lowercase letter, one special character, and one number. [] []
+[2024-10-14T16:46:40.169231+00:00] registration_log.ERROR: Invalid first name. Must contain only letters and be one word not greater than 30 characters. [] []
+[2024-10-14T16:47:01.347297+00:00] registration_log.ERROR: Invalid first name. Must contain only letters and be one word not greater than 30 characters. [] []
+[2024-10-14T16:47:32.258601+00:00] registration_log.ERROR: Invalid last name. Must contain only letters and be one word not greater than 30 characters. [] []
+[2024-10-14T16:47:49.403218+00:00] registration_log.ERROR: Invalid contact number. It should be in the format +94XXXXXXXXX or 0XXXXXXXXX. [] []
+[2024-10-14T16:48:10.498092+00:00] registration_log.ERROR: Invalid email address. [] []
+[2024-10-14T17:24:49.326495+00:00] registration_log.INFO: User U0007 registered successfully. [] []
