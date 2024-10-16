@@ -1,63 +1,77 @@
 <?php
-include_once 'auth.php';
-// Allow only POST requests
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../Errors/error.php?code=403&message=No permission allowed");
-    exit();
-}
-// Include your database connection file
-require("../config/dbconnection.php");
+include_once 'patientAccessControl.php';
+authorizePatientAccess();
 
-// Start a session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-// Get the current patient's ID from the session
-$patientId = $_SESSION['patientid'];
+try {
+    require('../config/logger.php');
+    $logger = createLogger('Paitent_appointment.log');
+    if(!$logger){
+        throw new Exception('Failed to create logger instance.',500);
+    }
 
-// Construct the SQL query to fetch appointments data
-$query = "SELECT a.*, d.lastname, pm.name as paymentname
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        throw new Exception("Only GET requests are allowed.", 403);
+    }
+    require("../config/dbconnection.php");
+
+    $patientId = $_SESSION['patientid'];
+
+    $stmt = $con->prepare("
+        SELECT a.*, d.lastname, pm.name as paymentname
         FROM appointment AS a
         JOIN doctor AS d ON a.doctorid = d.doctorid
         JOIN paymentmethod AS pm ON a.paymentmethodid = pm.paymentmethodid
-        WHERE a.patientid = '$patientId'
-        ORDER BY a.appointmentdate DESC";
+        WHERE a.patientid = ?
+        ORDER BY a.appointmentdate DESC
+    ");
+    if (!$stmt) {
+        throw new Exception("Failed to prepare SQL statement: ", 500);
+    }
+    $stmt->bind_param("s", $patientId);
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to execute query: ", 500);
+    }
+    $result = $stmt->get_result();
 
-// Execute the query
-$result = $con->query($query);
+    $appointments = array();
 
-// Initialize an array to store appointments data
-$appointments = array();
-
-// Check if there are any rows returned
-if ($result->num_rows > 0) {
-    // Fetch each row and add it to the appointments array
-    while ($row = $result->fetch_assoc()) {
-        // Construct an array representing an appointment
-        $appointment = array(
-            "appointmentID" => $row['appointmentid'],
-            "date" => $row['appointmentdate'],
-            "time" => $row['appointmentslot'],
-            "queueNo" => $row['queueno'],
-            "doctorName" => $row['lastname'],
-            "status" => $row['status'],
-            "charge" => $row['appointmentcharges'],
-            "paymentMethod" => $row['paymentname']
-        );
-
-        // Add the appointment to the appointments array
-        $appointments[] = $appointment;
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $appointment = array(
+                "appointmentID" => htmlspecialchars($row['appointmentid']),
+                "date" => htmlspecialchars($row['appointmentdate']),
+                "time" => htmlspecialchars($row['appointmentslot']),
+                "queueNo" => htmlspecialchars($row['queueno']),
+                "doctorName" => htmlspecialchars($row['lastname']),
+                "status" => htmlspecialchars($row['status']),
+                "charge" => htmlspecialchars($row['appointmentcharges']),
+                "paymentMethod" => htmlspecialchars($row['paymentname'])
+            );
+            $appointments[] = $appointment;
+        }
+        $logger->info("Successfully fetched " . count($appointments) . " appointments for patient ID: " . $patientId);
+    }else{
+        $logger->warning("No appointments found for patient ID: " . $patientId);
+    }
+    $appointmentsJSON = json_encode($appointments);
+    header('Content-Type: application/json');
+    echo $appointmentsJSON;
+} catch (Exception $e) {
+    $logger->error("Error in " . (__FILE__) . ": " . $e->getMessage(), [
+        'code' => $e->getCode()
+    ]);
+    header('Content-Type: application/json');
+    http_response_code($e->getCode() ? $e->getCode() : 500);
+    echo json_encode(["error" => $e->getMessage()]);
+} finally {
+    if (isset($stmt)) {
+        $stmt->close();
+    }
+    if (isset($con) && $con instanceof mysqli) {
+        $con->close();
+    }  
+    if (isset($logger)) {
+        unset($logger);
     }
 }
 
-// Convert the appointments array to JSON format
-$appointmentsJSON = json_encode($appointments);
-
-// Set the appropriate headers to indicate JSON content
-header('Content-Type: application/json');
-
-// Output the JSON data
-echo $appointmentsJSON;
-
-// Close the database connection
-$con->close();

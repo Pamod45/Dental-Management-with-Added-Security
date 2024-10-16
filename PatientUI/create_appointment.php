@@ -1,42 +1,69 @@
 <?php
-include_once 'auth.php';
-require("../config/dbconnection.php");
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '../logs/Paitent_appointment.log');
+include_once 'patientAccessControl.php';
+authorizePatientAccess();
+
+
+try {
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new  Exception("Invalid request method", 405);
+    }
+    if (!isset($_POST['doctorId'], $_POST['appointmentDate'], $_POST['appointmentSlot'], 
+              $_POST['queueNo'], $_POST['appointmentId'], $_POST['paymentMethod'])) {
+        throw new Exception("Missing required fields", 400);
+    }
+    if (!file_exists("../config/dbconnection.php")) {
+        throw new Exception("Failed to find dbconnection.php");
+    }
+    include_once ("../config/dbconnection.php");
+    if (!file_exists('../config/logger.php')) {
+        throw new Exception("Failed to include logger.php");
+    } 
+    include_once ("../config/logger.php");
+    if (!function_exists('createLogger')) {
+        throw new Exception('Logger function not defined.');
+    }
+    $logger = createLogger('Paitent_appointment.log');
+    if (!$logger) {
+        throw new Exception('Failed to create logger instance.');
+    }
+    $doctorId = htmlspecialchars($con->real_escape_string($_POST['doctorId']), ENT_QUOTES, 'UTF-8');
+    $appointmentDate = htmlspecialchars($con->real_escape_string($_POST['appointmentDate']), ENT_QUOTES, 'UTF-8');
+    $appointmentSlot = htmlspecialchars($con->real_escape_string($_POST['appointmentSlot']), ENT_QUOTES, 'UTF-8');
+    $queueNo = (int)$_POST['queueNo']; 
+    $patientId = $_SESSION['patientid'];
+    $appointmentId = htmlspecialchars($con->real_escape_string($_POST['appointmentId']), ENT_QUOTES, 'UTF-8');
+    $paymentMethod = htmlspecialchars($con->real_escape_string($_POST['paymentMethod']), ENT_QUOTES, 'UTF-8');
+
+    $stmt = $con->prepare("INSERT INTO `pdms`.`appointment`
+        (`appointmentid`, `paymentmethodid`, `patientid`, `doctorid`, `status`,
+        `appointmentcharges`, `createddate`, `appointmentdate`,
+        `appointmentslot`, `queueno`) 
+        VALUES (?, ?, ?, ?, 'In Progress', '3500', NOW(), ?, ?, ?)");
+
+    if (!$stmt) {
+        throw new Exception("Failed to prepare statement: " . $con->error, 500);
+    }
+
+    $stmt->bind_param("ssssssi", $appointmentId, $paymentMethod, $patientId, $doctorId, 
+                      $appointmentDate, $appointmentSlot, $queueNo);
+
+    if ($stmt->execute()) {
+        $logger->info("Successfully created appointment ID: $appointmentId for patient ID: $patientId");
+        echo json_encode(array('success' => true));
+    } else {
+        throw new Exception("Failed to create appointment: " . $stmt->error, 500);
+    }
+} catch (Exception $e) {
+    $logger->error("Error: " . $e->getMessage(), ['code' => $e->getCode()]);
+    http_response_code($e->getCode() ? $e->getCode() : 500);
+    echo json_encode(array('success' => false, 'error' => 'An error occurred while processing your request.'));
+} finally {
+    if (isset($stmt)) {
+        $stmt->close();
+    }
+    $con->close();
 }
-
-// Allow only POST requests
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../Errors/error.php?code=403&message=No permission allowed");
-    exit();
-}
-
-
-// Fetch data from POST request
-$doctorId = $_POST['doctorId'];
-$appointmentDate = $_POST['appointmentDate'];
-$appointmentSlot = $_POST['appointmentSlot'];
-$queueNo = $_POST['queueNo'];
-$patientId = $_SESSION['patientid'];
-$appointmentId = $_POST['appointmentId'];
-$paymentMethod = $_POST['paymentMethod'];
-
-// SQL query to insert appointment data into the appointment table
-$insertQuery = "INSERT INTO `pdms`.`appointment`
-            (`appointmentid`, `paymentmethodid`, `patientid`, `doctorid`, `status`,
-            `appointmentcharges`, `createddate`, `appointmentdate`
-            , `appointmentslot`, `queueno`) 
-            VALUES ('$appointmentId', '$paymentMethod', '$patientId', '$doctorId', 'In Progress', '3500', NOW(),
-            '$appointmentDate', '$appointmentSlot', '$queueNo')";
-
-// Execute the query
-if ($con->query($insertQuery) === TRUE) {
-    // If the appointment is successfully created, return a success message
-    echo json_encode(array('success' => true));
-} else {
-    // If there is an error, return an error message
-    echo json_encode(array('success' => false, 'error' => 'Failed to create appointment: ' . $con->error));
-}
-
-// Close the database connection
-$con->close();

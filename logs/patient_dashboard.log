@@ -1,0 +1,2 @@
+[2024-10-15T16:07:17.441595+00:00] patient_dashboard.log.INFO: Patient dashboard accessed {"userid":"U0001"} []
+[2024-10-16T06:21:25.964646+05:30] patient_dashboard.log.ERROR: Error: Invalid request method {"code":405} []

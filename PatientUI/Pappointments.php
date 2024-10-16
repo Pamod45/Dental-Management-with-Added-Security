@@ -1,5 +1,6 @@
 <?php
-include_once 'auth.php';
+include_once 'patientAccessControl.php';
+authorizePatientAccess();
 ?>
 
 <!DOCTYPE html>
@@ -146,10 +147,9 @@ include_once 'auth.php';
 <?php include("../config/includes.php"); ?>
 <script>
     $('.logout').click(function() {
-        // Send an AJAX request to logout
         $.ajax({
-            type: 'POST', // or 'GET' depending on your server-side implementation
-            url: '../user/logout.php', // URL to your logout endpoint
+            type: 'POST',
+            url: '../user/logout.php',
             success: function(response) {
                 window.location.href = '../user/login.php';
             },
@@ -160,22 +160,15 @@ include_once 'auth.php';
     });
     document.addEventListener("DOMContentLoaded", function() {
 
-
         fillTable();
 
-        // Get the cacel button inside the modal
         var cancelButton = document.getElementById("cancelAppointment");
-
-        // Get the close button inside the modal
         var closeButton = document.getElementById("close");
 
-        // Add click event listener to the close button
         closeButton.addEventListener("click", function() {
-            // Hide the modal
             $('#editModal').modal('hide');
         });
         cancelButton.addEventListener("click", function() {
-            // Show a SweetAlert confirmation dialog
             Swal.fire({
                 title: 'Are you sure?',
                 text: "This appointment will be canceled!",
@@ -186,57 +179,43 @@ include_once 'auth.php';
                 confirmButtonText: 'Yes, cancel it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Get the modal body
                     var modalBody = document.querySelector(".modal-body");
-                    // Get the appointment ID from the modal body
                     var appointmentID = modalBody.querySelector("#appointmentID").value;
-                    // Get the table body
                     var tableBody = document.querySelector(".table tbody");
                     $.ajax({
                         type: "POST",
-                        url: "delete_appointment.php", // Adjust the URL to your server-side script
+                        url: "delete_appointment.php", 
                         data: {
                             appointmentID: appointmentID
                         },
                         success: function(success) {
-                            // Remove the corresponding row from the table
                             var rows = tableBody.querySelectorAll("tr");
                             rows.forEach(function(row) {
                                 if (row.cells[0].textContent === appointmentID) {
                                     row.remove();
                                 }
                             });
-
-                            // Hide the modal
                             $('#editModal').modal('hide');
                         },
                         error: function(xhr, status, error) {
                             console.error('Error occurred while deleting appointment:', error);
                         }
                     });
-                    // Hide the modal
                     $('#editModal').modal('hide');
                 }
             });
 
         });
 
-        // Get the input field for the date search
         var searchInput = document.getElementById("searchDate");
 
-        // Add an event listener to capture changes in the input value
         searchInput.addEventListener("input", function() {
             const searchCriteria = document.getElementById("searchCriteria");
-            // Get the value entered by the user
             var searchValue = searchInput.value.trim().toLowerCase();
-            // Get selected criteria
             const selectedCriteria = searchCriteria.value.toLowerCase();
-            // Get all the rows in the table body
             var tableRows = document.querySelectorAll(".table tbody tr");
 
-            // Loop through each row and hide rows that don't match the search value
             tableRows.forEach(function(row) {
-                // Get the cell content based on the selected criteria
                 var cellContent;
                 if (selectedCriteria === "date") {
                     cellContent = row.cells[1].textContent.toLowerCase();
@@ -245,13 +224,9 @@ include_once 'auth.php';
                 } else if (selectedCriteria === "status") {
                     cellContent = row.cells[5].textContent.toLowerCase();
                 }
-
-                // Check if the cell content includes the search value
                 if (cellContent.includes(searchValue)) {
-                    // Show the row if it matches the search value
                     row.style.display = "";
                 } else {
-                    // Hide the row if it doesn't match the search value
                     row.style.display = "none";
                 }
             });
@@ -274,33 +249,25 @@ include_once 'auth.php';
 
     });
 
-    // Function to find appointment by ID
+
     function findAppointmentById(appointments, appointmentId) {
         for (var i = 0; i < appointments.length; i++) {
             if (appointments[i].appointmentID === appointmentId) {
-                return appointments[i]; // Return the appointment if found
+                return appointments[i]; 
             }
         }
-        return null; // Return null if appointment not found
+        return null; 
     }
 
     function fillTable() {
         $.ajax({
-            type: "POST",
-            url: "fetch_appointments.php", // Update the URL to your backend script
+            type: "GET",
+            url: "fetch_appointments.php", 
             success: function(appointmentsJSON) {
-                // Parse the JSON response
                 var appointments = appointmentsJSON;
-
-                // Reference to the table body
                 var tableBody = $("#appointmentTableBody");
-
-                // Clear existing table rows
                 tableBody.empty();
-
-                // Iterate over the appointments and append rows to the table
                 appointments.forEach(function(appointment) {
-                    // Construct table row HTML
                     var rowHtml = "<tr>" +
                         "<td>" + appointment.appointmentID + "</td>" +
                         "<td>" + appointment.date + "</td>" +
@@ -310,15 +277,11 @@ include_once 'auth.php';
                         "<td>" + appointment.status + "</td>" +
                         "<td><button class='btn btn-outline-info btn-view' style='width:100px; margin-top: 0px;'>View</button></td>" +
                         "</tr>";
-
-                    // Append the row to the table body
                     tableBody.append(rowHtml);
                 });
                 var viewButtons = document.querySelectorAll(".btn-view");
-                // Iterate over each view button and attach a click event listener
                 viewButtons.forEach(function(button) {
                     button.addEventListener("click", function() {
-                        // Find the parent row of the button that was clicked
                         var row = this.closest("tr");
                         var appointmentID = row.cells[0].textContent;
                         currentAppointment = findAppointmentById(appointments, appointmentID);
@@ -331,7 +294,6 @@ include_once 'auth.php';
                         var charge = currentAppointment.charge;
                         var paymentName = currentAppointment.paymentMethod;
 
-                        // Populate the modal inputs with the values from the row
                         document.getElementById("appointmentID").value = appointmentID;
                         document.getElementById("date").value = date;
                         document.getElementById("time").value = time;
@@ -341,14 +303,10 @@ include_once 'auth.php';
                         document.getElementById("PMethod").value = paymentName;
                         var cancelButton = document.getElementById('cancelAppointment');
                         if (status === "Completed") {
-                            // Disable the Cancel Appointment button
                             cancelButton.disabled = true;
                         } else {
-                            // Enable the Cancel Appointment button
                             cancelButton.disabled = false;
                         }
-
-                        // Open the modal
                         $('#editModal').modal('show');
                     });
                 });

@@ -1,4 +1,9 @@
 <?php
+// $_SESSION['user_agent'] !== $_SERVER['HTTP_USER_AGENT'] ||
+// $_SESSION['ip_address'] !== $_SERVER['REMOTE_ADDR']
+session_start();
+// echo $_SERVER['REMOTE_ADDR'];
+ echo $_SESSION['ip_address'];
 if (isset($_GET['text'])) {
     // Get the text from the URL
     $text = $_GET['text'];

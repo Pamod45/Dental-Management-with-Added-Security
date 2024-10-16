@@ -1,74 +1,86 @@
 <?php
-include_once 'auth.php';
-require("../config/dbconnection.php");
-$query = "SELECT MAX(appointmentid) AS max_id FROM appointment";
-$result = $con->query($query);
-// Initialize the next appointment ID
-$nextAppointmentID = '';
-$row = $result->fetch_assoc();
-// Check if there is a result
-if ($result && $result->num_rows > 0 && $row['max_id']) {
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '../logs/Paitent_appointment.log');
+include_once 'patientAccessControl.php';
+authorizePatientAccess();
 
-    // Get the last appointment ID
-    $lastAppointmentID = $row['max_id'];
+try {
+    if (!file_exists("../config/dbconnection.php")) {
+        throw new Exception("Failed to find dbconnection.php");
+    }
+    include_once ("../config/dbconnection.php");
+    if (!file_exists('../config/logger.php')) {
+        throw new Exception("Failed to include logger.php");
+    } 
+    include_once ("../config/logger.php");
+    if (!function_exists('createLogger')) {
+        throw new Exception('Logger function not defined.');
+    }
+    $logger = createLogger('Paitent_appointment.log');
+    if (!$logger) {
+        throw new Exception('Failed to create logger instance.');
+    }
+    $nextAppointmentID = '';
+    $stmt = $con->prepare("SELECT MAX(appointmentid) AS max_id FROM appointment");
+    if (!$stmt) {
+        throw new Exception("Failed to prepare SQL statement: " . $con->error, 500);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        if ($row['max_id']) {
+            $lastAppointmentID = $row['max_id'];
+            $numericPart = (int) substr($lastAppointmentID, 2);
+            $nextNumericPart = $numericPart + 1;
+            $nextAppointmentID = 'AP' . sprintf("%03d", $nextNumericPart);
+        } else {
+            $nextAppointmentID = 'AP001';
+        }
+    }
+    $doctorStmt = $con->prepare("SELECT * FROM doctor");
+    if (!$doctorStmt) {
+        throw new Exception("Failed to prepare SQL statement for doctors: " . $con->error, 500);
+    }
+    $doctorStmt->execute();
+    $doctorResult = $doctorStmt->get_result();
+    $options = "";
+    if ($doctorResult && $doctorResult->num_rows > 0) {
+        while ($doctorRow = $doctorResult->fetch_assoc()) {
+            $doctorFullName = htmlspecialchars($doctorRow['firstname'] . " " . $doctorRow['lastname'], ENT_QUOTES, 'UTF-8');
+            $doctorID = htmlspecialchars($doctorRow['doctorid'], ENT_QUOTES, 'UTF-8');
+            $options .= "<option value='{$doctorID}'>Dr. {$doctorFullName}</option>";
+        }
+    }
+    $paymentMethodStmt = $con->prepare("SELECT * FROM paymentmethod");
+    if (!$paymentMethodStmt) {
+        throw new Exception("Failed to prepare SQL statement for payment methods: " . $con->error, 500);
+    }
 
-    // Extract the numeric part of the last appointment ID
-    $numericPart = (int) substr($lastAppointmentID, 2);
-
-    // Increment the numeric part by 1
-    $nextNumericPart = $numericPart + 1;
-
-    // Format the next appointment ID with leading zeros
-    $nextAppointmentID = 'AP' . sprintf("%03d", $nextNumericPart);
-} else {
-    // If no appointments exist yet, start with AP001
-    $nextAppointmentID = 'AP001';
-}
-
-
-$doctorQuery = "SELECT * FROM doctor";
-
-// Execute the query to fetch all doctors
-$doctorResult = $con->query($doctorQuery);
-
-// Initialize an empty string to store the options
-$options = "";
-
-// Check if there are any doctors
-if ($doctorResult && $doctorResult->num_rows > 0) {
-    // Loop through each doctor and create an option tag
-    while ($doctorRow = $doctorResult->fetch_assoc()) {
-        // Concatenate the doctor's first name and last name to form the full name
-        $doctorFullName = $doctorRow['firstname'] . " " . $doctorRow['lastname'];
-        // Create the option tag with the doctor's full name as the value and text
-        $options .= "<option value='{$doctorRow['doctorid']}'>Dr. {$doctorFullName}</option>";
+    $paymentMethodStmt->execute();
+    $paymentMethodResult = $paymentMethodStmt->get_result();
+    $paymentMethodOptions = "";
+    if ($paymentMethodResult && $paymentMethodResult->num_rows > 0) {
+        while ($paymentMethodRow = $paymentMethodResult->fetch_assoc()) {
+            $paymentMethodName = htmlspecialchars($paymentMethodRow['name'], ENT_QUOTES, 'UTF-8');
+            $paymentMethodID = htmlspecialchars($paymentMethodRow['paymentmethodid'], ENT_QUOTES, 'UTF-8');
+            $paymentMethodOptions .= "<option value='{$paymentMethodID}'>{$paymentMethodName}</option>";
+        }
+    }
+    $stmt->close();
+    $doctorStmt->close();
+    $paymentMethodStmt->close();
+} catch (Exception $e) {
+    $logger->error("Error in " . (__FILE__) . ": " . $e->getMessage(), [
+        'code' => $e->getCode()
+    ]);
+    if (isset($con) && $con instanceof mysqli) {
+        $con->close();
     }
 }
-
-// Construct the SQL query to fetch all payment methods
-$paymentMethodQuery = "SELECT * FROM paymentmethod";
-
-// Execute the query to fetch all payment methods
-$paymentMethodResult = $con->query($paymentMethodQuery);
-
-// Initialize an empty string to store the options
-$paymentMethodOptions = "";
-
-// Check if there are any payment methods
-if ($paymentMethodResult && $paymentMethodResult->num_rows > 0) {
-    // Loop through each payment method and create an option tag
-    while ($paymentMethodRow = $paymentMethodResult->fetch_assoc()) {
-        // Get the payment method name
-        $paymentMethodName = $paymentMethodRow['name'];
-        $id = $paymentMethodRow['paymentmethodid'];
-        // Create the option tag with the payment method name as the value and text
-        $paymentMethodOptions .= "<option value='{$id}'>{$paymentMethodName}</option>";
-    }
-}
-
-// Close the payment method result set
-$paymentMethodResult->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -124,7 +136,7 @@ $paymentMethodResult->close();
             </li>
             <li>
                 <a href="PUpdateProfile.php" class="nav-list-item">
-                <i class="fa-solid fa-user sideBarIcon"></i>
+                    <i class="fa-solid fa-user sideBarIcon"></i>
                     <span class="nav-item">Update Profile</span>
                 </a>
             </li>
@@ -145,12 +157,12 @@ $paymentMethodResult->close();
             <form id="appointmentForm">
                 <div class="form-group">
                     <label for="AID" id="idlabel">Appointment ID</label>
-                    <input type="text" class="form-control" id="AID" value="<?php echo $nextAppointmentID ?>" readonly>
+                    <input type="text" class="form-control" id="AID" value="<?php echo isset($nextAppointmentID) ? $nextAppointmentID : '--' ?>" readonly>
                 </div>
                 <div class="form-group">
                     <label for="ADname">Doctor Name</label>
                     <select class="form-select" id="ADname">
-                        <?php echo $options; ?>
+                        <?php echo isset($options) ? $options : null; ?>
                     </select>
                 </div>
                 <div class="form-group">
@@ -175,7 +187,7 @@ $paymentMethodResult->close();
                 <div class="form-group">
                     <label for="PMethod">Payment Method</label>
                     <select class="form-select" id="PMethod">
-                        <?php echo $paymentMethodOptions; ?>
+                        <?php echo isset($paymentMethodOptions) ? $paymentMethodOptions : null; ?>
                     </select>
                 </div>
                 <div class="form-group">

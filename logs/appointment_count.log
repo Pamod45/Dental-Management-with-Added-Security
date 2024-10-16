@@ -1,0 +1,84 @@
+[16-Oct-2024 00:15:56 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:15:56 UTC] PHP Stack trace:
+[16-Oct-2024 00:15:56 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:15:56 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:15:58 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:15:58 UTC] PHP Stack trace:
+[16-Oct-2024 00:15:58 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:15:58 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:15:59 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:15:59 UTC] PHP Stack trace:
+[16-Oct-2024 00:15:59 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:15:59 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:00 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:00 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:00 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:00 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:00 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:00 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:00 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:00 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:00 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:00 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:00 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:00 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:00 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:00 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:00 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:00 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:01 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:01 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:01 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:01 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:01 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:01 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:01 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:01 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:02 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:02 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:02 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:02 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:02 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:02 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:02 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:02 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:03 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65
+[16-Oct-2024 00:16:03 UTC] PHP Stack trace:
+[16-Oct-2024 00:16:03 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:0
+[16-Oct-2024 00:16:03 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:65
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 65

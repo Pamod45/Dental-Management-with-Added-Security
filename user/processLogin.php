@@ -1,10 +1,15 @@
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] != "POST"){
-    //do the error handling
+if ($_SERVER['REQUEST_METHOD'] != "POST") {
+    // redirect to login page
+    header("Location: /user/login.php");
+    exit();
 }
+
+
 require("../config/dbconnection.php");
 require('../vendor/autoload.php');
+
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -15,12 +20,17 @@ $logger->pushHandler(new StreamHandler('../logs/login_processor.log', Logger::DE
 // Start the session securely
 $cookieLifetime = 1800; // 30 minutes
 if (!session_id()) {
-    session_start([
-        'lifetime' => $cookieLifetime,
-        'cookie_secure' => true,  // Ensure cookies are sent only over HTTPS
-        'cookie_httponly' => true, // Prevent JavaScript access to session cookies
-        'cookie_samesite' => 'Strict' // Help mitigate CSRF attacks
+    // Set secure session cookie parameters
+    session_set_cookie_params([
+        'lifetime' => $cookieLifetime, // Session cookies only last as long as the browser is open
+        'path' => '/', // Accessible across the entire domain
+        'domain' => 'localhost', // Replace with your actual domain
+        'secure' => true, // Ensures the cookie is sent only over HTTPS connections
+        'httponly' => true, // Prevents JavaScript access to session cookies
+        'samesite' => 'Strict' // Prevents CSRF by ensuring the cookie is only sent for same-site requests
     ]);
+
+    session_start();
 }
 
 $maxAttempts = 3; // Max allowed attempts
@@ -74,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
             // Regenerate session ID to prevent session fixation
             session_regenerate_id(true);
+            $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
             // Reset attempts and lockout time on successful login
             $_SESSION['attempts'] = 0;
             $_SESSION['lockout_time'] = 0;
@@ -137,5 +149,3 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $logger->error('Invalid request method.');
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
-
-

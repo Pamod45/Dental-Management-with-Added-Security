@@ -1,42 +1,51 @@
 <?php
-include_once 'auth.php';
-// Include your database connection file
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '../logs/Paitent_appointment.log');
+include('patientAccessControl.php');
+authorizePatientAccess();
 require("../config/dbconnection.php");
+require('../config/logger.php');
+$logger = createLogger('patient_dashboard.log');
 
-// Allow only POST requests
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../Errors/error.php?code=403&message=No permission allowed");
-    exit();
+try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw  new Exception("Invalid request method", 405);
+    }
+    if (!isset($_POST['selectedDate']) || !isset($_POST['doctorId']) || !isset($_POST['startTime'])) {
+        throw new Exception("Missing required fields", 400);
+    }
+    $date = htmlspecialchars($con->real_escape_string($_POST['selectedDate']), ENT_QUOTES, 'UTF-8');
+    $doctorId = htmlspecialchars($con->real_escape_string($_POST['doctorId']), ENT_QUOTES, 'UTF-8');
+    $startTime = htmlspecialchars($con->real_escape_string($_POST['startTime']), ENT_QUOTES, 'UTF-8');
+
+    $stmt = $con->prepare("SELECT COUNT(*) AS AppointmentCount 
+                           FROM appointment 
+                           WHERE appointmentdate = ? 
+                           AND doctorid = ? 
+                           AND appointmentslot = ?");
+    if (!$stmt) {
+        throw new Exception("Failed to prepare SQL statement: " . $con->error, 500);
+    }
+
+    $stmt->bind_param("sss", $date, $doctorId, $startTime);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $appointmentCount = 0;
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $appointmentCount = (int)$row['AppointmentCount'];
+    }
+
+    $stmt->close();
+    $con->close();
+
+    $response = array("AppointmentCount" => $appointmentCount);
+    echo json_encode($response);
+} catch (Exception $e) {
+    $logger->error("Error: " . $e->getMessage(), ['code' => $e->getCode()]);
+    http_response_code($e->getCode() ? $e->getCode() : 500);
+    echo json_encode(array('success' => false, 'error' => 'An error occurred while processing your request.'));
 }
-// Get the date, doctor ID, and start time from the request
-$date = $_POST['selectedDate'];
-$doctorId = $_POST['doctorId'];
-$startTime = $_POST['startTime'];
-
-// Construct the SQL query to count appointments
-$query = "SELECT COUNT(*) AS AppointmentCount 
-FROM appointment 
-WHERE appointmentdate = '$date' 
-AND doctorid = '$doctorId' 
-AND appointmentslot = '$startTime'";
-
-// Execute the query
-$result = $con->query($query);
-
-// Initialize a variable to store the count of appointments
-$appointmentCount = 0;
-
-// Check if there are any rows returned
-if ($result && $result->num_rows > 0) {
-    // Fetch the count of appointments
-    $row = $result->fetch_assoc();
-    $appointmentCount = $row['AppointmentCount'];
-}
-
-// Close the database connection
-$con->close();
-
-$response = array("AppointmentCount" => $appointmentCount);
-
-// Return the count of appointments as JSON data
-echo json_encode($response);
