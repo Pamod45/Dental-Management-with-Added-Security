@@ -1,6 +1,6 @@
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] != "POST") {
+if ($_SERVER['REQUEST_METHOD'] != "POST" || !isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], '/user/login.php') === false) {
     // redirect to login page
     header("Location: /user/login.php");
     exit();
@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 require("../config/dbconnection.php");
 require('../vendor/autoload.php');
 
+use \Firebase\JWT\JWT;
+use \Firebase\JWT\Key;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -81,6 +83,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $row = $result->fetch_assoc();
         // Verify the password using password_verify
         if (password_verify($_POST['txtpassword'], $row['password'])) {
+            // Create JWT token
+            $key = "abcd4658hj^"; // Your secret key
+            $payload = [
+                'iat' => time(), // Issued at: time when the token is generated
+                'exp' => time() + (60 * 60), // Expiration time: 1 hour from now
+                'userid' => $row['userid'],
+                'usertype' => $row['usertype']
+            ];
+
+            // Generate JWT
+            $jwt = JWT::encode($payload, $key, 'HS256');
+
+            // Set the JWT as a cookie
+            setcookie('jwtToken', $jwt, time() + (60 * 60), "/", "", true, true);
 
             // Regenerate session ID to prevent session fixation
             session_regenerate_id(true);

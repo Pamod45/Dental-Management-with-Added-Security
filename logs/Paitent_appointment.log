@@ -1,85 +1,44 @@
-[2024-10-16T03:53:00.673066+05:30] Paitent_appointment.log.INFO: Successfully fetched 3 appointments for patient ID: P0001 [] []
-[2024-10-16T03:55:48.573245+05:30] Paitent_appointment.log.INFO: Successfully fetched 3 appointments for patient ID: P0001 [] []
-[2024-10-16T03:56:02.700893+05:30] Paitent_appointment.log.INFO: Successfully fetched 2 appointments for patient ID: P0001 [] []
-[2024-10-16T04:23:04.259788+05:30] Paitent_appointment.log.INFO: Successfully fetched 1 appointments for patient ID: P0001 [] []
-[2024-10-16T04:26:55.224108+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
-[2024-10-16T04:27:28.052477+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
-[2024-10-16T04:29:48.480797+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
-[2024-10-16T04:31:10.993761+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
-[2024-10-16T04:31:18.195627+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP002 for patient ID:  [] []
-[2024-10-16T04:31:25.044004+05:30] Paitent_appointment.log.INFO: Successfully fetched 3 appointments for patient ID: P0001 [] []
-[2024-10-16T04:31:31.923331+05:30] Paitent_appointment.log.INFO: Successfully fetched 3 appointments for patient ID: P0001 [] []
-[2024-10-16T04:31:46.927878+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP003 for patient ID:  [] []
-[2024-10-16T04:31:48.349328+05:30] Paitent_appointment.log.INFO: Successfully fetched 2 appointments for patient ID: P0001 [] []
-[2024-10-16T04:33:33.456078+05:30] Paitent_appointment.log.INFO: Successfully fetched 2 appointments for patient ID: P0001 [] []
-[2024-10-16T04:33:36.547157+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP004 for patient ID:  [] []
-[2024-10-16T04:33:36.547893+05:30] Paitent_appointment.log.INFO: Successfully deleted  appointment withAP004 for patient ID:  [] []
-[2024-10-16T04:33:38.092818+05:30] Paitent_appointment.log.INFO: Successfully fetched 1 appointments for patient ID: P0001 [] []
-[2024-10-16T04:35:18.204569+05:30] Paitent_appointment.log.ERROR: Error in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\delete_appointment.php: Only POST requests are allowed. {"code":403} []
-[2024-10-16T04:36:30.000636+05:30] Paitent_appointment.log.INFO: Successfully fetched 1 appointments for patient ID: P0001 [] []
-[2024-10-16T04:47:04.505920+05:30] Paitent_appointment.log.INFO: Successfully fetched 2 appointments for patient ID: P0001 [] []
-[2024-10-16T04:51:34.799675+05:30] Paitent_appointment.log.ERROR: Error in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\delete_appointment.php: Only POST requests are allowed. {"code":403} []
-[2024-10-16T04:51:39.179076+05:30] Paitent_appointment.log.INFO: Successfully fetched 2 appointments for patient ID: P0001 [] []
-[2024-10-16T05:11:42.298112+05:30] Paitent_appointment.log.INFO: Successfully fetched 3 appointments for patient ID: P0001 [] []
-[2024-10-16T05:11:51.052804+05:30] Paitent_appointment.log.INFO: Successfully fetched 3 appointments for patient ID: P0001 [] []
-
-[16-Oct-2024 00:03:09 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\PNewAppointment.php on line 78
-[16-Oct-2024 00:03:09 UTC] PHP Stack trace:
-[16-Oct-2024 00:03:09 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\PNewAppointment.php:0
-[16-Oct-2024 00:03:09 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\PNewAppointment.php:78
-Stack trace:
-#0 {main}
-  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\PNewAppointment.php on line 78
-[2024-10-16T05:34:53.427857+05:30] Paitent_appointment.log.INFO: Successfully fetched 3 appointments for patient ID: P0001 [] []
-[2024-10-16T05:35:02.621765+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP004 for patient ID: P0001 [] []
-[2024-10-16T05:35:05.902577+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
-[2024-10-16T05:35:23.028715+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
-[2024-10-16T05:36:23.985976+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
-[16-Oct-2024 00:16:14 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 69
-[16-Oct-2024 00:16:14 UTC] PHP Stack trace:
-[16-Oct-2024 00:16:14 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:0
-[16-Oct-2024 00:16:14 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:69
-Stack trace:
-#0 {main}
-  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 69
-[16-Oct-2024 00:16:16 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 69
-[16-Oct-2024 00:16:16 UTC] PHP Stack trace:
-[16-Oct-2024 00:16:16 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:0
-[16-Oct-2024 00:16:16 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:69
-Stack trace:
-#0 {main}
-  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 69
-[16-Oct-2024 00:16:17 UTC] PHP Warning:  Undefined variable $logger in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 69
-[16-Oct-2024 00:16:17 UTC] PHP Stack trace:
-[16-Oct-2024 00:16:17 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:0
-[16-Oct-2024 00:16:17 UTC] PHP Fatal error:  Uncaught Error: Call to a member function error() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:69
-Stack trace:
-#0 {main}
-  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 69
-[16-Oct-2024 00:19:10 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function authorizePatientAccess() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php:6
-Stack trace:
-#0 {main}
-  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_queue_number.php on line 6
-[2024-10-16T05:55:37.657045+05:30] Paitent_appointment.log.ERROR: Error: Missing required fields {"code":400} []
-[16-Oct-2024 05:59:28 Asia/Colombo] PHP Warning:  Undefined variable $con in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 25
-[16-Oct-2024 05:59:28 Asia/Colombo] PHP Stack trace:
-[16-Oct-2024 05:59:28 Asia/Colombo] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:0
-[16-Oct-2024 05:59:28 Asia/Colombo] PHP Fatal error:  Uncaught Error: Call to a member function real_escape_string() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:25
-Stack trace:
-#0 {main}
-  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 25
-[16-Oct-2024 05:59:31 Asia/Colombo] PHP Warning:  Undefined variable $con in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 25
-[16-Oct-2024 05:59:31 Asia/Colombo] PHP Stack trace:
-[16-Oct-2024 05:59:31 Asia/Colombo] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:0
-[16-Oct-2024 05:59:31 Asia/Colombo] PHP Fatal error:  Uncaught Error: Call to a member function real_escape_string() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:25
-Stack trace:
-#0 {main}
-  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 25
-[16-Oct-2024 05:59:34 Asia/Colombo] PHP Warning:  Undefined variable $con in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 25
-[16-Oct-2024 05:59:34 Asia/Colombo] PHP Stack trace:
-[16-Oct-2024 05:59:34 Asia/Colombo] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:0
-[16-Oct-2024 05:59:34 Asia/Colombo] PHP Fatal error:  Uncaught Error: Call to a member function real_escape_string() on null in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php:25
-Stack trace:
-#0 {main}
-  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\fetch_available_slots.php on line 25
-
+[2024-10-17T17:49:31.935990+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
+[2024-10-17T19:36:45.516638+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
+[2024-10-17T19:37:06.417045+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
+[2024-10-17T19:37:12.422054+05:30] Paitent_appointment.log.INFO: Successfully fetched 4 appointments for patient ID: P0001 [] []
+[2024-10-17T19:44:34.168477+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP006 for patient ID: P0001 [] []
+[2024-10-17T19:54:12.188761+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP007 for patient ID: P0001 [] []
+[2024-10-17T19:54:34.312240+05:30] Paitent_appointment.log.INFO: Successfully fetched 6 appointments for patient ID: P0001 [] []
+[2024-10-17T19:56:54.108126+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP008 for patient ID: P0001 [] []
+[2024-10-17T19:59:05.655035+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP009 for patient ID: P0001 [] []
+[2024-10-17T20:01:24.031817+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP010 for patient ID: P0001 [] []
+[2024-10-17T20:03:13.234906+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP011 for patient ID: P0001 [] []
+[2024-10-17T20:03:17.151466+05:30] Paitent_appointment.log.INFO: Successfully fetched 10 appointments for patient ID: P0001 [] []
+[2024-10-17T20:04:37.806679+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP012 for patient ID: P0001 [] []
+[2024-10-17T20:04:41.018215+05:30] Paitent_appointment.log.INFO: Successfully fetched 11 appointments for patient ID: P0001 [] []
+[2024-10-17T20:06:06.014219+05:30] Paitent_appointment.log.ERROR: Error: User not authorized. {"code":0} []
+[2024-10-17T20:07:35.224126+05:30] Paitent_appointment.log.ERROR: Error: User not authorized. {"code":0} []
+[2024-10-17T20:19:13.996514+05:30] Paitent_appointment.log.INFO: Successfully fetched 11 appointments for patient ID: P0001 [] []
+[2024-10-17T20:19:32.817434+05:30] Paitent_appointment.log.INFO: Successfully fetched 10 appointments for patient ID: P0001 [] []
+[2024-10-17T20:19:50.928108+05:30] Paitent_appointment.log.INFO: Successfully fetched 9 appointments for patient ID: P0001 [] []
+[2024-10-17T20:22:43.799348+05:30] Paitent_appointment.log.INFO: Successfully fetched 8 appointments for patient ID: P0001 [] []
+[2024-10-17T20:23:15.652408+05:30] Paitent_appointment.log.INFO: Successfully fetched 7 appointments for patient ID: P0001 [] []
+[2024-10-17T20:24:21.683925+05:30] Paitent_appointment.log.INFO: Successfully fetched 7 appointments for patient ID: P0001 [] []
+[2024-10-17T20:24:39.192456+05:30] Paitent_appointment.log.INFO: Successfully fetched 6 appointments for patient ID: P0001 [] []
+[2024-10-17T20:33:24.239971+05:30] Paitent_appointment.log.INFO: Successfully fetched 2 appointments for patient ID: P0001 [] []
+[2024-10-17T20:35:01.368432+05:30] Paitent_appointment.log.INFO: Successfully fetched 1 appointments for patient ID: P0001 [] []
+[2024-10-17T20:35:23.678194+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP002 for patient ID: P0001 [] []
+[2024-10-17T20:36:02.967717+05:30] Paitent_appointment.log.INFO: Successfully fetched 2 appointments for patient ID: P0001 [] []
+[2024-10-17T20:36:15.719600+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP002 for patient ID: P0001 [] []
+[2024-10-17T20:36:45.725124+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP002 for patient ID: P0001 [] []
+[2024-10-17T20:36:48.463229+05:30] Paitent_appointment.log.INFO: Successfully fetched 2 appointments for patient ID: P0001 [] []
+[2024-10-17T20:37:00.863788+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP002 for patient ID: P0001 [] []
+[2024-10-17T20:42:20.798945+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP002 for patient ID: P0001 [] []
+[2024-10-17T20:42:26.166111+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP003 for patient ID: P0001 [] []
+[2024-10-17T20:42:31.970230+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP004 for patient ID: P0001 [] []
+[2024-10-17T20:52:16.721151+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP005 for patient ID: P0001 [] []
+[2024-10-17T21:22:59.397735+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP002 for patient ID: P0001 [] []
+[2024-10-17T21:23:09.964465+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP003 for patient ID: P0001 [] []
+[2024-10-17T21:28:47.138170+05:30] Paitent_appointment.log.ERROR: Error in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\delete_appointment.php: Failed to decrypt appointment ID. {"code":500} []
+[2024-10-17T21:31:50.329267+05:30] Paitent_appointment.log.ERROR: Error in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\delete_appointment.php: Failed to decrypt appointment ID. {"code":500} []
+[2024-10-17T21:32:10.615701+05:30] Paitent_appointment.log.ERROR: Error in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\delete_appointment.php: Failed to decrypt appointment ID. {"code":500} []
+[2024-10-17T21:33:47.316896+05:30] Paitent_appointment.log.ERROR: Error in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\delete_appointment.php: Failed to decrypt appointment ID. {"code":500} []
+[2024-10-17T21:42:52.023002+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP004 for patient ID: P0001 [] []
+[2024-10-17T21:44:01.647033+05:30] Paitent_appointment.log.INFO: Successfully deleted appointment ID: AP005 for patient ID: P0001 [] []
+[2024-10-17T21:51:56.957578+05:30] Paitent_appointment.log.INFO: Successfully created appointment ID: AP002 for patient ID: P0001 [] []

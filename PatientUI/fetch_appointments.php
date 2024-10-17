@@ -1,19 +1,32 @@
 <?php
-include_once 'patientAccessControl.php';
-authorizePatientAccess();
+header_remove("X-Powered-By");
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '../logs/uncaught_errors.log');
 
+include('../config/fatalErrorWarningHandler.php');
+include('patientAccessControl.php');
+include('authorizePatientAccess.php');
+require("../config/patientDBConnection.php");
+require('../config/logger.php');
+
+$logger = createLogger('patient_dashboard.log');
 try {
-    require('../config/logger.php');
-    $logger = createLogger('Paitent_appointment.log');
     if(!$logger){
         throw new Exception('Failed to create logger instance.',500);
     }
-
+    $authorizedUser = authorizePatientAccess();
+    if (!$authorizedUser) {
+        throw new Exception('User not authorized.');
+    }
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         throw new Exception("Only GET requests are allowed.", 403);
     }
-    require("../config/dbconnection.php");
-
+    $con = getDatabaseConnection();
+    if (!$con) {
+        throw new Exception('Failed to connect to database.');
+    }
+    
     $patientId = $_SESSION['patientid'];
 
     $stmt = $con->prepare("
@@ -57,21 +70,12 @@ try {
     header('Content-Type: application/json');
     echo $appointmentsJSON;
 } catch (Exception $e) {
-    $logger->error("Error in " . (__FILE__) . ": " . $e->getMessage(), [
-        'code' => $e->getCode()
-    ]);
+    if($logger)
+        $logger->error("Error in " . (__FILE__) . ": " . $e->getMessage(), [
+            'code' => $e->getCode()
+        ]);
     header('Content-Type: application/json');
     http_response_code($e->getCode() ? $e->getCode() : 500);
     echo json_encode(["error" => $e->getMessage()]);
-} finally {
-    if (isset($stmt)) {
-        $stmt->close();
-    }
-    if (isset($con) && $con instanceof mysqli) {
-        $con->close();
-    }  
-    if (isset($logger)) {
-        unset($logger);
-    }
-}
+} 
 

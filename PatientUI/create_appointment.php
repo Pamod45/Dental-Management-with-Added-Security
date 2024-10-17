@@ -1,12 +1,23 @@
 <?php
+header_remove("X-Powered-By");
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', '../logs/Paitent_appointment.log');
-include_once 'patientAccessControl.php';
-authorizePatientAccess();
+ini_set('error_log', '../logs/uncaught_errors.log');
 
-
+include('../config/fatalErrorWarningHandler.php');
+include_once('patientAccessControl.php');
+include ("../config/logger.php");
+require("../config/patientDBConnection.php");
+$logger = createLogger('Paitent_appointment.log');
+header('Content-Type: application/json');
 try {
+    if (!$logger) {
+        throw new Exception('Failed to create logger instance.');
+    }
+    $authorizedUser = authorizePatientAccess();
+    if (!$authorizedUser) {
+        throw new Exception('User not authorized.');
+    }
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new  Exception("Invalid request method", 405);
@@ -15,21 +26,12 @@ try {
               $_POST['queueNo'], $_POST['appointmentId'], $_POST['paymentMethod'])) {
         throw new Exception("Missing required fields", 400);
     }
-    if (!file_exists("../config/dbconnection.php")) {
-        throw new Exception("Failed to find dbconnection.php");
+    
+    $con = getDatabaseConnection();
+    if (!$con) {
+        throw new Exception('Failed to connect to database.');
     }
-    include_once ("../config/dbconnection.php");
-    if (!file_exists('../config/logger.php')) {
-        throw new Exception("Failed to include logger.php");
-    } 
-    include_once ("../config/logger.php");
-    if (!function_exists('createLogger')) {
-        throw new Exception('Logger function not defined.');
-    }
-    $logger = createLogger('Paitent_appointment.log');
-    if (!$logger) {
-        throw new Exception('Failed to create logger instance.');
-    }
+    
     $doctorId = htmlspecialchars($con->real_escape_string($_POST['doctorId']), ENT_QUOTES, 'UTF-8');
     $appointmentDate = htmlspecialchars($con->real_escape_string($_POST['appointmentDate']), ENT_QUOTES, 'UTF-8');
     $appointmentSlot = htmlspecialchars($con->real_escape_string($_POST['appointmentSlot']), ENT_QUOTES, 'UTF-8');
@@ -58,7 +60,8 @@ try {
         throw new Exception("Failed to create appointment: " . $stmt->error, 500);
     }
 } catch (Exception $e) {
-    $logger->error("Error: " . $e->getMessage(), ['code' => $e->getCode()]);
+    if($logger)
+        $logger->error("Error: " . $e->getMessage(), ['code' => $e->getCode()]);
     http_response_code($e->getCode() ? $e->getCode() : 500);
     echo json_encode(array('success' => false, 'error' => 'An error occurred while processing your request.'));
 } finally {

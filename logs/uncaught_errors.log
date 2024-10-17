@@ -1,0 +1,82 @@
+[17-Oct-2024 19:17:59 Asia/Colombo] PHP Warning:  Undefined variable $con in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\dashboard.php on line 111
+[17-Oct-2024 19:17:59 Asia/Colombo] PHP Stack trace:
+[17-Oct-2024 19:17:59 Asia/Colombo] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\dashboard.php:0
+[17-Oct-2024 14:18:40 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php:9
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php on line 9
+[17-Oct-2024 14:20:24 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php:9
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php on line 9
+[17-Oct-2024 14:21:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php:9
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php on line 9
+[17-Oct-2024 14:22:22 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php:9
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php on line 9
+[17-Oct-2024 14:22:30 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php:9
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php on line 9
+[17-Oct-2024 14:23:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php:9
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php on line 9
+[17-Oct-2024 14:23:10 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php:9
+Stack trace:
+#0 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\create_appointment.php on line 9
+[17-Oct-2024 18:10:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\fatalErrorWarningHandler.php:3
+Stack trace:
+#0 E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php(8): errorHandler(2, 'include(patient...', 'E:\\Users\\pubup\\...', 8)
+#1 E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php(8): include()
+#2 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\fatalErrorWarningHandler.php on line 3
+[17-Oct-2024 18:11:46 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\fatalErrorWarningHandler.php:3
+Stack trace:
+#0 E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php(8): errorHandler(2, 'include(patient...', 'E:\\Users\\pubup\\...', 8)
+#1 E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php(8): include()
+#2 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\fatalErrorWarningHandler.php on line 3
+[17-Oct-2024 18:13:14 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\fatalErrorWarningHandler.php:3
+Stack trace:
+#0 E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php(8): errorHandler(2, 'include(../user...', 'E:\\Users\\pubup\\...', 8)
+#1 E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php(8): include()
+#2 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\fatalErrorWarningHandler.php on line 3
+[17-Oct-2024 18:14:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function createLogger() in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\fatalErrorWarningHandler.php:3
+Stack trace:
+#0 E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php(8): errorHandler(2, 'include(../user...', 'E:\\Users\\pubup\\...', 8)
+#1 E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php(8): include()
+#2 {main}
+  thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\fatalErrorWarningHandler.php on line 3
+[17-Oct-2024 18:17:44 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:17:44 UTC] PHP Stack trace:
+[17-Oct-2024 18:17:44 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php:0
+[17-Oct-2024 18:17:46 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:17:46 UTC] PHP Stack trace:
+[17-Oct-2024 18:17:46 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\reports\medicalRecord.php:0
+[17-Oct-2024 18:18:11 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:18:11 UTC] PHP Stack trace:
+[17-Oct-2024 18:18:11 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\MedicalRecords.php:0
+[17-Oct-2024 18:18:12 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:18:12 UTC] PHP Stack trace:
+[17-Oct-2024 18:18:12 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\MedicalRecords.php:0
+[17-Oct-2024 18:18:13 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:18:13 UTC] PHP Stack trace:
+[17-Oct-2024 18:18:13 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\dashboard.php:0
+[17-Oct-2024 18:18:14 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:18:14 UTC] PHP Stack trace:
+[17-Oct-2024 18:18:14 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\Pappointments.php:0
+[17-Oct-2024 18:18:15 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:18:15 UTC] PHP Stack trace:
+[17-Oct-2024 18:18:15 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\PNewAppointment.php:0
+[17-Oct-2024 18:18:16 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:18:16 UTC] PHP Stack trace:
+[17-Oct-2024 18:18:16 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\PUpdateProfile.php:0
+[17-Oct-2024 18:20:05 UTC] PHP Fatal error:  Cannot redeclare createLogger() (previously declared in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php:7) in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\logger.php on line 7
+[17-Oct-2024 18:20:05 UTC] PHP Stack trace:
+[17-Oct-2024 18:20:05 UTC] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\PatientUI\dashboard.php:0
