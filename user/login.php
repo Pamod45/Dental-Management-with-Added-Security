@@ -149,9 +149,8 @@
                         'g-recaptcha-response': grecaptcha.getResponse()
                     },
                     success: function(response) {
-                        const result = JSON.parse(response);
-                        if (result.success) {
-                            window.location.href = result.redirectUrl; // Redirect to the appropriate dashboard
+                        if (response.success) {
+                            window.location.href = response.redirectUrl; // Redirect to the appropriate dashboard
                         } else {
                             Swal.fire({
                                 title: 'Error',
@@ -166,7 +165,7 @@
                     error: function() {
                         Swal.fire({
                             title: 'Error',
-                            text: 'An error occurred while processing your request. Please try again later.',
+                            text: error.message,
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });

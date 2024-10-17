@@ -119,10 +119,6 @@ try {
             echo json_encode(array("success" => false, "message" => "Invalid email format."));
             exit;
         }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo json_encode(array("success" => false, "message" => "Invalid email format."));
-            exit;
-        }
         if (!DateTime::createFromFormat('Y-m-d', $dob)) {
             echo json_encode(array("success" => false, "message" => "Invalid date format. Use YYYY-MM-DD."));
             exit;

@@ -1,23 +1,23 @@
 <?php
-
+header_remove("X-Powered-By");
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '../logs/uncaught_errors.log');
 if ($_SERVER['REQUEST_METHOD'] != "POST" || !isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], '/user/login.php') === false) {
     // redirect to login page
+    http_response_code(405);
     header("Location: /user/login.php");
     exit();
 }
 
-
-require("../config/dbconnection.php");
+require("../config/guestDBConnection.php");
+require("../vendor/autoload.php");
+require('../config/logger.php');
 require('../vendor/autoload.php');
 
-use \Firebase\JWT\JWT;
-use \Firebase\JWT\Key;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+$logger = createLogger('processLogin.log');
 
-// Create a logger instance
-$logger = new Logger('login_processor');
-$logger->pushHandler(new StreamHandler('../logs/login_processor.log', Logger::DEBUG));
+use \Firebase\JWT\JWT;
 
 // Start the session securely
 $cookieLifetime = 1800; // 30 minutes
@@ -37,24 +37,25 @@ if (!session_id()) {
 
 $maxAttempts = 3; // Max allowed attempts
 $lockoutTime = 30; // Lockout time in seconds
-
-// Initialize attempts and lockout time
-if (!isset($_SESSION['attempts'])) {
-    $_SESSION['attempts'] = 0;
-}
-if (!isset($_SESSION['lockout_time'])) {
-    $_SESSION['lockout_time'] = 0;
-}
-
-// Check if user is currently locked out
-if ($_SESSION['lockout_time'] > time()) {
-    $remainingLockout = $_SESSION['lockout_time'] - time();
-    $logger->warning('Tried to access locked account ' . ($_SESSION['userid'] ?? 'unknown'));
-    echo json_encode(['success' => false, 'message' => 'Your account is locked. Please try again in ' . $remainingLockout . ' seconds.']);
-    exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    header('Content-Type: application/json');
+    // Initialize attempts and lockout time
+    if (!isset($_SESSION['attempts'])) {
+        $_SESSION['attempts'] = 0;
+    }
+    if (!isset($_SESSION['lockout_time'])) {
+        $_SESSION['lockout_time'] = 0;
+    }
+    // Check if user is currently locked out
+    if ($_SESSION['lockout_time'] > time()) {
+        $remainingLockout = $_SESSION['lockout_time'] - time();
+        $logger->warning('Tried to access locked account ' . ($_SESSION['userid'] ?? 'unknown'));
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Your account is locked. Please try again in ' . $remainingLockout . ' seconds.']);
+        exit();
+    }
+
+
     // Check reCAPTCHA response
     $recaptchaSecret = '6LekfF8qAAAAAJbchVG_vTMi2m__06WZFgNRZmeu'; // Replace with your actual secret key
     $recaptchaResponse = $_POST['g-recaptcha-response'];
@@ -65,13 +66,19 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
     if (intval($responseKeys["success"]) !== 1) {
         // reCAPTCHA validation failed
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Please confirm you are not a robot.']);
         exit();
     }
 
     // reCAPTCHA passed, proceed with username and password validation
     $username = trim(htmlentities($_POST['txtusername']));
-
+    $con = getDatabaseConnection();
+    if (!$con) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Failed to connect to database.']);
+        exit;
+    }
     // Use prepared statements to prevent SQL injection
     $query = $con->prepare("SELECT * FROM user WHERE userid = ?");
     $query->bind_param("s", $username);
@@ -141,9 +148,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $_SESSION['lockout_time'] = time() + $lockoutTime; // Set lockout time
                 $_SESSION['attempts'] = 0; // Reset attempts
                 $logger->error('User account ' . $username . ' locked out due to too many failed attempts.');
+                http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Too many failed attempts. Your account is locked for 30 seconds.']);
             } else {
                 $logger->warning('Failed login attempt for user ' . $username);
+                http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Invalid username or password. You have ' . ($maxAttempts - $_SESSION['attempts']) . ' attempts left.']);
             }
             exit();
@@ -154,14 +163,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if ($_SESSION['attempts'] >= $maxAttempts) {
             $_SESSION['lockout_time'] = time() + $lockoutTime; // Set lockout time
             $logger->error('User account ' . $username . ' locked out due to too many failed attempts.');
+            http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Too many failed attempts. Your account is locked for 30 seconds.']);
         } else {
             $logger->warning('Failed login attempt for non-existent user ' . $username);
+            http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Invalid username or password. You have ' . ($maxAttempts - $_SESSION['attempts']) . ' attempts left.']);
         }
         exit();
     }
 } else {
     $logger->error('Invalid request method.');
+    http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }

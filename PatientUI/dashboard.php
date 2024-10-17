@@ -108,12 +108,7 @@ try {
     <h1>Something went wrong</h1>
     <p>' . htmlspecialchars($e->getMessage()) . '</p>
     ';
-} finally {
-    if ($con) {
-        $con->close();
-    }
-}
-
+} 
 if ($loadDashBoard): ?>
     <!DOCTYPE html>
     <html lang="en">

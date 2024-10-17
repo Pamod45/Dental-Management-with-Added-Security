@@ -1,47 +1,49 @@
 <?php
+header_remove("X-Powered-By");
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '../logs/uncaught_errors.log');
 
-require("../config/dbconnection.php");
-require("../vendor/autoload.php"); // Include your Monolog autoload
+require("../config/guestDBConnection.php");
+require("../vendor/autoload.php");
+require('../config/logger.php');
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-
-$log = new Logger('registration_log');
-$log->pushHandler(new StreamHandler('../logs/registration.log', Logger::DEBUG));
+$logger = createLogger('signup.log');
 
 if (isset($_POST['register'])) {
+    $con = getDatabaseConnection();
+    if (!$con) {
+        echo json_encode(['success' => false, 'message' => 'Failed to connect to database.']);
+        exit;
+    }
     $con->begin_transaction();
 
     try {
+        if (!$logger) {
+            throw new Exception('Failed to create logger instance.', 500);
+        }
 
-        // Check reCAPTCHA response
-        $recaptchaSecret = '6LekfF8qAAAAAJbchVG_vTMi2m__06WZFgNRZmeu'; // Replace with your actual secret key
+        $recaptchaSecret = '6LekfF8qAAAAAJbchVG_vTMi2m__06WZFgNRZmeu';
         $recaptchaResponse = $_POST['g-recaptcha-response'];
 
-        // Verify the reCAPTCHA response
         $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse");
         $responseKeys = json_decode($response, true);
 
         if (intval($responseKeys["success"]) !== 1) {
-            // reCAPTCHA validation failed
             echo json_encode(['success' => false, 'message' => 'Please confirm you are not a robot.']);
             exit();
         }
 
-        // Input sanitization
         $password = $con->real_escape_string($_POST['password']);
         $confirmPassword = $con->real_escape_string($_POST['confirm_password']); // Capture the confirm password
         $usertype = 'Patient';
         $registereddate = date('Y-m-d');
         $loginstatus = 0;
 
-        // Check if password and confirm password match
         if ($password !== $confirmPassword) {
             throw new Exception("Passwords do not match.");
         }
 
-        // Check password complexity: minimum 8 and maximum 20 characters,
-        // at least one uppercase letter, one lowercase letter, one special character, and one number
         if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[0-9]).{8,20}$/', $password)) {
             throw new Exception("Password must be 8-20 characters long, contain at least one uppercase letter, one lowercase letter, one special character, and one number.");
         }
@@ -66,22 +68,42 @@ if (isset($_POST['register'])) {
         $address = $con->real_escape_string($_POST['address']);
         $contactno = $con->real_escape_string($_POST['contact']);
 
-        // Validate inputs with regex
         if (!preg_match("/^[a-zA-Z]{1,30}$/", $firstname)) {
-            throw new Exception("Invalid first name. Must contain only letters and be one word not greater than 30 characters.");
+            echo json_encode(array("success" => false, "message" => "Invalid first name."));
+            exit;
         }
         if (!preg_match("/^[a-zA-Z]{1,30}$/", $lastname)) {
-            throw new Exception("Invalid last name. Must contain only letters and be one word not greater than 30 characters.");
+            echo json_encode(array("success" => false, "message" => "Invalid last name."));
+            exit;
         }
-        if (strlen($address) > 100) {
-            throw new Exception("Address should be less than 100 characters.");
+        if (strlen($address) > 100 || strlen($address) < 1) {
+            echo json_encode(array("success" => false, "message" => "Address should be less than 100 characters."));
+            exit;
         }
-        // Validate contact number
         if (!preg_match("/^\+94\d{9}$|^0\d{9}$/", $contactno)) {
-            throw new Exception("Invalid contact number. It should be in the format +94XXXXXXXXX or 0XXXXXXXXX.");
+            echo json_encode(array("success" => false, "message" => "Invalid contact number."));
+            exit;
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Invalid email address.");
+            echo json_encode(array("success" => false, "message" => "Invalid email format."));
+            exit;
+        }
+        if (!DateTime::createFromFormat('Y-m-d', $dob)) {
+            echo json_encode(array("success" => false, "message" => "Invalid date format. Use YYYY-MM-DD."));
+            exit;
+        }
+
+        $currentDate = new DateTime();
+        $dobDate = new DateTime($dob);
+
+        if ($dobDate > $currentDate) {
+            echo json_encode(array("success" => false, "message" => "Date of birth cannot be in the future."));
+            exit;
+        }
+        $age = $currentDate->diff($dobDate)->y;
+        if ($age <= 14) {
+            echo json_encode(array("success" => false, "message" => "You must be older than 14 years."));
+            exit;
         }
 
         // Prepare the SQL statement for user insertion
@@ -114,7 +136,8 @@ if (isset($_POST['register'])) {
 
         // Commit the transaction
         $con->commit();
-        $log->info("User $next_userid registered successfully.");
+        if ($logger)
+            $logger->info("User $next_userid registered successfully.");
         echo json_encode(['success' => true, 'userid' => $next_userid]);
     } catch (Exception $e) {
         // Roll back the transaction in case of error
@@ -203,8 +226,8 @@ if (isset($_POST['register'])) {
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <script>
-        $(document).ready(function () {
-            $("#registerButton").click(function () {
+        $(document).ready(function() {
+            $("#registerButton").click(function() {
                 // Get values from input fields
                 var fname = $("#fname").val();
                 var lname = $("#lname").val();
@@ -217,14 +240,14 @@ if (isset($_POST['register'])) {
                 var captchaResponse = grecaptcha.getResponse(); // Get CAPTCHA response
 
                 // Validate required fields
-                if (fname === "" || lname === "" || contact === "" || email === "" || dob === "" || address === "" || password === "" || confirmpassword === "") {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'All fields are required!',
-                    });
-                    return;
-                }
+                // if (fname === "" || lname === "" || contact === "" || email === "" || dob === "" || address === "" || password === "" || confirmpassword === "") {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'Oops...',
+                //         text: 'All fields are required!',
+                //     });
+                //     return;
+                // }
 
                 // AJAX request to register the user
                 $.ajax({
@@ -240,9 +263,9 @@ if (isset($_POST['register'])) {
                         password: password,
                         confirm_password: confirmpassword, // Corrected variable name
                         'g-recaptcha-response': captchaResponse, // Include reCAPTCHA response
-                        register:true
+                        register: true
                     },
-                    success: function (data) {
+                    success: function(data) {
                         var response = JSON.parse(data);
                         if (response.success) {
                             Swal.fire({
@@ -261,7 +284,7 @@ if (isset($_POST['register'])) {
                             grecaptcha.reset();
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Registration Failed',
