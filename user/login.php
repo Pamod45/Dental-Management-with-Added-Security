@@ -148,13 +148,14 @@
                         txtpassword: pas,
                         'g-recaptcha-response': grecaptcha.getResponse()
                     },
+                    dataType: 'json',
                     success: function(response) {
                         if (response.success) {
                             window.location.href = response.redirectUrl; // Redirect to the appropriate dashboard
                         } else {
                             Swal.fire({
                                 title: 'Error',
-                                text: result.message,
+                                text: response.message,
                                 icon: 'error',
                                 confirmButtonText: 'OK'
                             });
@@ -165,7 +166,7 @@
                     error: function() {
                         Swal.fire({
                             title: 'Error',
-                            text: error.message,
+                            text: 'Internal server error. Please try again later.',
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });

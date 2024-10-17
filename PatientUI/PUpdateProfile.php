@@ -370,7 +370,7 @@ if ($loadProfileUpdateUI) : ?>
                 });
                 return;
             }
-            if (newPassword && !/^(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[0-9]).{8,20}$/.test(newPassword)) {
+            if (!newPassword || !/^(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[0-9]).{8,20}$/.test(newPassword)) {
                 Swal.fire({
                     title: 'Error',
                     text: 'Password must be 8-20 characters long, contain at least one uppercase letter, one lowercase letter, one special character, and one number.',

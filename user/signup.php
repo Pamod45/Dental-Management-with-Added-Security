@@ -239,17 +239,108 @@ if (isset($_POST['register'])) {
                 var confirmpassword = $("#confirmpassword").val();
                 var captchaResponse = grecaptcha.getResponse(); // Get CAPTCHA response
 
-                // Validate required fields
-                // if (fname === "" || lname === "" || contact === "" || email === "" || dob === "" || address === "" || password === "" || confirmpassword === "") {
-                //     Swal.fire({
-                //         icon: 'error',
-                //         title: 'Oops...',
-                //         text: 'All fields are required!',
-                //     });
-                //     return;
-                // }
+                if (!/^[a-zA-Z]{1,30}$/.test(fname)) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Invalid first name. Must contain only letters and be one word not greater than 30 characters.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
 
-                // AJAX request to register the user
+                if (!/^[a-zA-Z]{1,30}$/.test(lname)) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Invalid last name. Must contain only letters and be one word not greater than 30 characters.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+
+                if (address.length > 100 || address.length < 1) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Address should be less than 100 characters.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                if (!/^\+94\d{9}$|^0\d{9}$/.test(contact)) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Invalid contact number. It should be in the format +94XXXXXXXXX or 0XXXXXXXXX.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Invalid email address.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                if(!dob){
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Date of birth is required.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                var currentDate = new Date();
+                var selectedDate = new Date(dob);
+                if (selectedDate >= currentDate) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Date of birth must be before today.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                var age = currentDate.getFullYear() - selectedDate.getFullYear();
+                var m = currentDate.getMonth() - selectedDate.getMonth();
+                if (m < 0 || (m === 0 && currentDate.getDate() < selectedDate.getDate())) {
+                    age--;
+                }
+                if (age < 14) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'You must be older than 14 years.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                if (!password || !/^(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[0-9]).{8,20}$/.test(password)) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Password must be 8-20 characters long, contain at least one uppercase letter, one lowercase letter, one special character, and one number.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                if(password!==confirmpassword){
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Password and confirm passwords do not match.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
                 $.ajax({
                     url: "signup.php",
                     method: "POST",

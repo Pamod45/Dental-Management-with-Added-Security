@@ -19,3 +19,4 @@
 [2024-10-18T01:01:04.031168+05:30] logout.log.ERROR: Error during logout: CSRF token not set in session. [] []
 [2024-10-18T01:10:09.147590+05:30] logout.log.INFO: User logged out successfully. [] []
 [2024-10-18T01:11:54.660607+05:30] logout.log.INFO: User logged out successfully. [] []
+[2024-10-18T01:35:12.367901+05:30] logout.log.INFO: User logged out successfully. [] []
