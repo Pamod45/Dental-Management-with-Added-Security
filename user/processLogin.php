@@ -15,7 +15,7 @@ require("../vendor/autoload.php");
 require('../config/logger.php');
 require('../vendor/autoload.php');
 
-$logger = createLogger('processLogin.log');
+$logger = createLogger('guest.log');
 
 use \Firebase\JWT\JWT;
 

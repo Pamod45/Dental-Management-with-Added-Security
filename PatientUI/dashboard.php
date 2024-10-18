@@ -11,7 +11,7 @@ require("../config/patientDBConnection.php");
 require('../config/logger.php');
 
 $loadDashBoard = false;
-$logger = createLogger('patient_dashboard.log');
+$logger = createLogger('patient.log');
 try {
     // $result = authorizePatientAccessFromCookie();
     // $jsonResult = json_encode($result);

@@ -11,7 +11,7 @@ require("../config/patientDBConnection.php");
 require('../config/logger.php');
 
 $loadNewAppointmentUI = false;
-$logger = createLogger('patient_dashboard.log');
+$logger = createLogger('patient.log');
 //required apis 
 //fetch_available_slots.php 
 //create_appointment.php

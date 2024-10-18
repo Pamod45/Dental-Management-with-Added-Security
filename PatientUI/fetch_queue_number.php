@@ -10,7 +10,7 @@ include('authorizePatientAccess.php');
 require("../config/patientDBConnection.php");
 require('../config/logger.php');
 
-$logger = createLogger('patient_dashboard.log');
+$logger = createLogger('patient.log');
 header('Content-Type: application/json');
 try {
     if(!$logger){

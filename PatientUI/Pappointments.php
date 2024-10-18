@@ -10,7 +10,7 @@ include('authorizePatientAccess.php');
 require('../config/logger.php');
 
 $loadAppointmentsUI = false;
-$logger = createLogger('patient_dashboard.log');
+$logger = createLogger('patient.log');
 try {
     if (!$logger) {
         throw new Exception('Failed to create logger instance.');

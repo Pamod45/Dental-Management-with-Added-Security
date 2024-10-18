@@ -8,7 +8,7 @@ require("../config/guestDBConnection.php");
 require("../vendor/autoload.php");
 require('../config/logger.php');
 
-$logger = createLogger('signup.log');
+$logger = createLogger('guest.log');
 
 if (isset($_POST['register'])) {
     $con = getDatabaseConnection();

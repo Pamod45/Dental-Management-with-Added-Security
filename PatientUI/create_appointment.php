@@ -8,7 +8,7 @@ include('../config/fatalErrorWarningHandler.php');
 include_once('patientAccessControl.php');
 include ("../config/logger.php");
 require("../config/patientDBConnection.php");
-$logger = createLogger('Paitent_appointment.log');
+$logger = createLogger('patient.log');
 header('Content-Type: application/json');
 try {
     if (!$logger) {

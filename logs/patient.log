@@ -1,0 +1,5 @@
+[2024-10-18T18:47:21.906865+05:30] patient.log.INFO: Successfully created appointment ID: AP002 for patient ID: P0001 [] []
+[2024-10-18T18:47:28.232616+05:30] patient.log.INFO: Successfully created appointment ID: AP003 for patient ID: P0001 [] []
+[2024-10-18T18:47:33.865242+05:30] patient.log.INFO: Successfully created appointment ID: AP004 for patient ID: P0001 [] []
+[2024-10-18T18:47:40.394017+05:30] patient.log.INFO: Successfully created appointment ID: AP005 for patient ID: P0001 [] []
+[2024-10-18T18:47:42.544689+05:30] patient.log.INFO: Successfully fetched 5 appointments for patient ID: P0001 [] []

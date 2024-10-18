@@ -1,27 +1,101 @@
 <?php
-require("../config/dbconnection.php");
-session_start();
-$recordid = $_POST['medicalrecordid'];
+// header_remove("X-Powered-By");
+// ini_set('display_errors', 0);
+// ini_set('log_errors', 1);
+// ini_set('error_log', '../logs/uncaught_errors.log');
 
-$getMRecquery = "SELECT medicalrecordid,patientid,
-                (SELECT CONCAT(firstname, ' ', lastname) 
-                FROM patient WHERE patientid = m.patientid) AS patientname,
-                TIMESTAMPDIFF(YEAR, (SELECT dob FROM patient WHERE patientid = m.patientid), CURDATE()) 
-                AS patientage,
-                (SELECT CONCAT(firstname, ' ', lastname) 
-                FROM doctor WHERE doctorid = m.doctorid) AS doctorname,
-                specialnotes,presentingcomplaints,treatments,date
-                FROM medicalrecord m
-                where medicalrecordid='$recordid'";
+include('../config/fatalErrorWarningHandler.php');
+include('authorizeDoctorAccess.php');
+require("../config/doctorDBConnection.php");
+require('../config/logger.php');
 
-$Record = $con->query($getMRecquery);
-$MedicalRecord = $Record->fetch_assoc();
+$loadMedicalRecord = false;
+$logger = createLogger('doctor.log');
 
-$treatmentsArray = explode(",", $MedicalRecord['treatments']);
-$complaintsArray = explode(",", $MedicalRecord['presentingcomplaints']);
-$specialNotesArray = explode(",", $MedicalRecord['specialnotes']);
+try {
+    if (!$logger) {
+        throw new Exception('Failed to create logger instance.');
+    }
+    $authorizedUser = authorizeDoctorAccess();
+    if (!$authorizedUser) {
+        throw new Exception('User not authorized.',403);
+    }
+    if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405); // Method Not Allowed
+        throw new Exception('Invalid request method');
+    }
+    $con = getDatabaseConnection();
+    if (!$con) {
+        throw new Exception('Failed to connect to database.');
+    }
+    if(!isset($_SESSION['csrf_token']) || !isset($_POST['csrf_token'])) {
+        http_response_code(403); 
+        throw new Exception('CSRF token not found');
+    }
+    if(!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        http_response_code(403); 
+        throw new Exception('Invalid CSRF token');
+    }
+    $trustedOrigin = 'http://localhost:3000';
+    $trustedReferrer = 'http://localhost:3000/doctor/patientMedicalRecords.php';
 
-?>
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+
+    if ($origin !== $trustedOrigin || !str_starts_with($referrer, $trustedReferrer)) {
+        http_response_code(403);
+        throw new Exception('Invalid origin or referrer');
+    }
+    if(!isset($_POST['medicalrecordid'])){
+        throw new Exception('Mandatory field is not found', 404);
+    }
+    $recordid=htmlspecialchars($_POST['medicalrecordid']);
+    $getMRecquery = "SELECT medicalrecordid, patientid,
+                    (SELECT CONCAT(firstname, ' ', lastname) 
+                     FROM patient WHERE patientid = m.patientid) AS patientname,
+                    TIMESTAMPDIFF(YEAR, (SELECT dob FROM patient WHERE patientid = m.patientid), CURDATE()) 
+                     AS patientage,
+                    (SELECT CONCAT(firstname, ' ', lastname) 
+                     FROM doctor WHERE doctorid = m.doctorid) AS doctorname,
+                    specialnotes, presentingcomplaints, treatments, date
+                    FROM medicalrecord m
+                    WHERE medicalrecordid = ?";
+
+    $stmt = $con->prepare($getMRecquery);
+
+    if (!$stmt) {
+        throw new Exception('Failed to prepare statement: ' . $con->error, 500);
+    }
+    $stmt->bind_param('s', $recordid);
+    if (!$stmt->execute()) {
+        throw new Exception('Failed to execute statement: ' . $stmt->error, 500);
+    }
+    $result = $stmt->get_result();
+    $MedicalRecord = $result->fetch_assoc();
+
+    if (!$MedicalRecord) {
+        throw new Exception('Medical record not found', 404);
+    }
+    $treatmentsArray = array_map('htmlspecialchars', explode(",", $MedicalRecord['treatments']));
+    $complaintsArray = array_map('htmlspecialchars', explode(",", $MedicalRecord['presentingcomplaints']));
+    $specialNotesArray = array_map('htmlspecialchars', explode(",", $MedicalRecord['specialnotes']));
+    $loadMedicalRecord = true;
+    $stmt->close();
+} catch (Exception $e) {
+    if ($logger)
+        $logger->error($e->getMessage());
+    http_response_code($e->getCode() ? $e->getCode() : 500);
+    echo '
+    <h1>Something went wrong</h1>
+    <p>' . htmlspecialchars($e->getMessage()) . '</p>
+    ';
+    if($e->getCode() === 403){
+        echo '<a href="/user/login.php">Go to Login Page</a>';
+    }    
+    exit;
+}
+
+if($loadMedicalRecord):?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -155,15 +229,15 @@ $specialNotesArray = explode(",", $MedicalRecord['specialnotes']);
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-
+<script src='../assets/js/sanitize.js'></script>
 <script>
     var recordDetails = {
-        rid: "<?php echo $MedicalRecord['medicalrecordid'] ?>",
-        pid: "<?php echo $MedicalRecord['patientid'] ?>",
-        pname: "<?php echo $MedicalRecord['patientname'] ?>",
-        date: "<?php echo $MedicalRecord['date'] ?>",
-        dname: "Dr. <?php echo $MedicalRecord['doctorname'] ?>",
-        page: "<?php echo $MedicalRecord['patientage'] ?>",
+        rid: "<?php echo htmlspecialchars($MedicalRecord['medicalrecordid']) ?>",
+        pid: "<?php echo htmlspecialchars($MedicalRecord['patientid']) ?>",
+        pname: "<?php echo htmlspecialchars($MedicalRecord['patientname']) ?>",
+        date: "<?php echo htmlspecialchars($MedicalRecord['date']) ?>",
+        dname: "Dr. <?php echo htmlspecialchars($MedicalRecord['doctorname']) ?>",
+        page: "<?php echo htmlspecialchars($MedicalRecord['patientage']) ?>",
         complaints: <?php echo json_encode($complaintsArray) ?>,
         treatments: <?php echo json_encode($treatmentsArray) ?>,
         specialnotes: <?php echo json_encode($specialNotesArray) ?>
@@ -223,3 +297,5 @@ $specialNotesArray = explode(",", $MedicalRecord['specialnotes']);
 </script>
 
 </html>
+
+<?php endif; ?>

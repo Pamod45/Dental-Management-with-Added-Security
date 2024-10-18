@@ -8,9 +8,6 @@ try {
     if (!$logger) {
         throw new Exception('Failed to create logger instance.');
     }
-    if (!isset($_SESSION['csrf_token'])) {
-        throw new Exception('CSRF token not set in session.');
-    }
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
             $_SESSION = array();

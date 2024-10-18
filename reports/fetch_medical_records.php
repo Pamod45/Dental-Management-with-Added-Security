@@ -6,7 +6,7 @@ include_once '../patientUI/patientAccessControl.php';
 authorizePatientAccess();
 require("../config/dbconnection.php");
 require("../config/logger.php");
-$logger = createLogger('medical_records.log');
+$logger = createLogger('patient.log');
 
 try {
     if (isset($_POST['medicalrecordid'])) {

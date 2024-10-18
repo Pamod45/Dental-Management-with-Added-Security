@@ -11,7 +11,7 @@ require("../config/patientDBConnection.php");
 require('../config/logger.php');
 
 $loadProfileUpdateUI = false;
-$logger = createLogger('patient_dashboard.log');
+$logger = createLogger('patient.log');
 try {
     if (!$logger) {
         throw new Exception('Failed to create logger instance.');

@@ -1,24 +1,74 @@
 <?php
-require("../config/dbconnection.php");
-session_start();
-$docid = $_SESSION['doctorid'];
+header_remove("X-Powered-By");
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '../logs/uncaught_errors.log');
 
-$getMRecquery = "SELECT medicalrecordid,
-                patientid,
-                (SELECT CONCAT(firstname, ' ', lastname) 
-                FROM patient WHERE patientid = m.patientid) 
-                AS patientname,
-                (SELECT CONCAT(firstname, ' ', lastname) 
-                FROM doctor WHERE doctorid = m.doctorid) 
-                AS doctorname,
-                date
-                FROM medicalrecord m order by date desc;";
+include('../config/fatalErrorWarningHandler.php');
+include('authorizeDoctorAccess.php');
+require("../config/doctorDBConnection.php");
+require('../config/logger.php');
 
-$allRecords = $con->query($getMRecquery);
-while ($record = $allRecords->fetch_assoc()) {
-    $medicalRecords[] = $record;
+$loadPatientMedicalRecords = false;
+$logger = createLogger('doctor.log');
+try{
+    if (!$logger) {
+        throw new Exception('Failed to create logger instance.',500);
+    }
+    $authorizedUser = authorizeDoctorAccess();
+    if (!$authorizedUser) {
+        throw new Exception('User not authorized.',403);
+    }
+    $con = getDatabaseConnection();
+    if (!$con) {
+        throw new Exception('Failed to connect to database.',500);
+    }
+    if (!isset($_SESSION['doctorid'])) {
+        throw new Exception('Doctor not authenticated', 401);
+    }
+    $docid = htmlspecialchars($_SESSION['doctorid'], ENT_QUOTES, 'UTF-8');
+    $getMRecquery = "SELECT medicalrecordid,
+                    patientid,
+                    (SELECT CONCAT(firstname, ' ', lastname) 
+                    FROM patient WHERE patientid = m.patientid) 
+                    AS patientname,
+                    (SELECT CONCAT(firstname, ' ', lastname) 
+                    FROM doctor WHERE doctorid = m.doctorid) 
+                    AS doctorname,
+                    date
+                    FROM medicalrecord m
+                    ORDER BY date DESC";
+
+    $stmt = $con->prepare($getMRecquery);
+    if (!$stmt) {
+        throw new Exception('Failed to prepare statement: ' . $con->error);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $medicalRecords = [];
+    while ($record = $result->fetch_assoc()) {
+        $medicalRecords[] = array_map(function($value) {
+            return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        }, $record);
+    }
+
+    $stmt->close();
+    $loadPatientMedicalRecords = true;
+}catch(Exception $e){
+    if ($logger)
+        $logger->error($e->getMessage());
+    http_response_code($e->getCode() ? $e->getCode() : 500);
+    echo '
+    <h1>Something went wrong</h1>
+    <p>' . htmlspecialchars($e->getMessage()) . '</p>
+    <a href="/user/login.php">Go to Login Page</a>
+    ';
+    exit;
 }
-?>
+
+if($loadPatientMedicalRecords):?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -110,51 +160,15 @@ while ($record = $allRecords->fetch_assoc()) {
     </div>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="../assets/js/sanitize.js"></script>
 <script>
     var records = <?php echo json_encode($medicalRecords); ?>;
     console.log(records);
-    // var records = [{
-    //         mrid: "MR001",
-    //         pid: "P001",
-    //         date: "2023/05/08",
-    //         name: "Pubudu",
-    //         docname: "Dr. Silva"
-    //     },
-    //     {
-    //         mrid: "MR002",
-    //         pid: "P002",
-    //         date: "2023/05/08",
-    //         name: "Pamod",
-    //         docname: "Dr. Amali"
-    //     },
-    //     {
-    //         mrid: "MR003",
-    //         pid: "P003",
-    //         date: "2023/05/09",
-    //         name: "Kamal",
-    //         docname: "Dr. Perera"
-    //     },
-    //     {
-    //         mrid: "MR004",
-    //         pid: "P001",
-    //         date: "2023/05/10",
-    //         name: "Pubudu",
-    //         docname: "Dr. Silva"
-    //     },
-    //     {
-    //         mrid: "MR005",
-    //         pid: "P002",
-    //         date: "2023/05/11",
-    //         name: "Pamod",
-    //         docname: "Dr. Niroshana"
-    //     },
-    // ]
 
     $('.logout').click(function() {
-        // Send an AJAX request to logout
         $.ajax({
-            type: 'POST', // or 'GET' depending on your server-side implementation
-            url: '../user/logout.php', // URL to your logout endpoint
+            type: 'POST', 
+            url: '../user/logout.php', 
             success: function(response) {
                 window.location.href = '../user/login.php';
             },
@@ -164,25 +178,25 @@ while ($record = $allRecords->fetch_assoc()) {
         });
     });
 
-    // Add event listener after filling the table
     function addEventListenerToButtons() {
-        // Get all elements with the class name '.btn-viewrecord'
         var buttons = document.querySelectorAll('.btn-viewrecord');
 
-        // Loop through each button and add event listener
         buttons.forEach(function(button) {
             button.addEventListener('click', function() {
                 var form = document.createElement('form');
                 form.method = 'POST';
                 form.action = 'medicalRecord.php';
-
-
                 var hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
                 hiddenInput.name = 'medicalrecordid';
                 hiddenInput.value = this.dataset.recordid;
-
                 form.appendChild(hiddenInput);
+
+                var csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                csrfInput.value = '<?php $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); echo $_SESSION["csrf_token"]; ?>'; 
+                form.appendChild(csrfInput);
 
                 document.body.appendChild(form);
                 form.submit();
@@ -195,7 +209,6 @@ while ($record = $allRecords->fetch_assoc()) {
     function fillTable(data) {
         var tbody = document.querySelector(".table tbody");
         tbody.innerHTML = "";
-        // Loop through the data and create table rows
         data.forEach(function(item) {
             var row = document.createElement("tr");
 
@@ -213,57 +226,38 @@ while ($record = $allRecords->fetch_assoc()) {
 
 
     document.addEventListener("DOMContentLoaded", function() {
-        var searchValue = document.getElementById("searchValue");
-        var searchValue2 = document.getElementById("searchValue2");
-
+        var searchValue = sanitize(document.getElementById("searchValue"));
+        var  searchValue2 = sanitize(document.getElementById("searchValue2"));
         var tbody = document.querySelector(".table tbody");
-
-
         fillTable(records);
         addEventListenerToButtons();
-        // Add an event listener to capture changes in the input value
         searchValue2.addEventListener("input", function() {
-            // Get the value entered by the user
             var inputValue = searchValue2.value.trim().toLowerCase();
             var inputValue2 = searchValue.value.trim().toLowerCase();
-            // Get all the rows in the table body
             var tableRows = document.querySelectorAll(".table tbody tr");
-
-            // Loop through each row and hide rows that don't match the search value
             tableRows.forEach(function(row) {
                 var cellContent = row.cells[2].textContent.toLowerCase();
                 var cellcontent2 = row.cells[3].textContent.toLowerCase();
-                // Check if the cell content includes the search value
                 if (cellContent.includes(inputValue) && cellcontent2.includes(inputValue2)) {
-                    // Show the row if it matches the search value
                     row.style.display = "";
                 } else {
-                    // Hide the row if it doesn't match the search value
                     row.style.display = "none";
                 }
             });
         });
 
-        // Add an event listener to capture changes in the input value
         searchValue.addEventListener("input", function() {
-            // Get the value entered by the user
             var inputValue = searchValue.value.trim().toLowerCase();
             var inputValue2 = searchValue2.value.trim().toLowerCase();
-            // Get selected criteria
             var tableRows = document.querySelectorAll(".table tbody tr");
 
-            // Loop through each row and hide rows that don't match the search value
             tableRows.forEach(function(row) {
-                // Get the cell content based on the selected criteria
                 var cellContent = row.cells[3].textContent.toLowerCase();
                 var cellcontent2 = row.cells[2].textContent.toLowerCase();
 
-                // Check if the cell content includes the search value
                 if (cellContent.includes(inputValue) && cellcontent2.includes(inputValue2)) {
-                    // Show the row if it matches the search value
                     row.style.display = "";
                 } else {
-                    // Hide the row if it doesn't match the search value
                     row.style.display = "none";
                 }
             });
@@ -273,3 +267,5 @@ while ($record = $allRecords->fetch_assoc()) {
 </script>
 
 </html>
+
+<?php endif; ?>

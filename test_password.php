@@ -16,3 +16,5 @@ if (isset($_GET['text'])) {
     echo "<h1>No text provided. Please provide a text parameter in the URL.</h1>";
 }
 
+
+
