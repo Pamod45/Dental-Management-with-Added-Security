@@ -107,7 +107,7 @@ Here are some images that illustrate how error handling and database permissions
 ## Installation
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/NisalWick2002/Dental-Surgery-Data-Management-System.git
+   git clone https://github.com/Pamod45/Dental-Management-with-Added-Security.git
    cd dental-surgery-management
 2. **Set Up the PHP Environment**
    ```
