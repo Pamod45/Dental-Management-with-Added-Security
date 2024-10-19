@@ -5,19 +5,20 @@
 * [Nisal Wickramaarachchi](https://github.com/NisalWick2002)
 
 ## Project Overview 📋
-The **Dental Surgery Data Management System** is an extensive project utilizing HTML, JavaScript, Bootstrap, CSS, PHP, MySQL, Figma, Visual Studio Code, and WAMP server. This system streamlines the management of appointments, patient records, and other critical dental surgery operations, enhancing productivity and efficiency.Authentication, authorization, Integrity are all maintained with enhance security features.
+The **Dental Surgery Data Management System** is an extensive project utilizing HTML, JavaScript, Bootstrap, CSS, PHP, MySQL, Figma, Visual Studio Code, and a WAMP server. This system provides functionalities for managing appointments, patient records, and other critical dental surgery operations, enhancing productivity and efficiency. Authentication, authorization, and integrity are all maintained with enhanced security features.
 
 ## Table of Contents 📚
-- [Overview](https://github.com/NisalWick2002/temp?tab=readme-ov-file#overview-)
-- [Objectives](https://github.com/NisalWick2002/temp?tab=readme-ov-file#objectives-)
-- [Operations](https://github.com/NisalWick2002/temp?tab=readme-ov-file#operations-)
-- [Features](https://github.com/NisalWick2002/temp?tab=readme-ov-file#features-)
-- [Technologies Used](https://github.com/NisalWick2002/temp?tab=readme-ov-file#technologies-#used-)
-- [Installation](https://github.com/NisalWick2002/temp?tab=readme-ov-file#installation-)
-- [Usage](https://github.com/NisalWick2002/temp?tab=readme-ov-file#usage-)
-- [Security Measures](https://github.com/NisalWick2002/temp?tab=readme-ov-file#security-measures-)
-- [Contributing](https://github.com/NisalWick2002/temp?tab=readme-ov-file#contributing)
-- [License](https://github.com/NisalWick2002/temp?tab=readme-ov-file#license)
+- [Overview](#overview-)
+- [Objectives](#objectives-)
+- [Operations](#operations-)
+- [Features](#features-)
+- [Technologies Used](#technologies-used-)
+- [Installation](#installation-)
+- [Usage](#usage-)
+- [Security Measures](#security-measures-)
+- [Images](#images-)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Overview 📋
 This comprehensive project represents the culmination of year-end efforts. Designed as a robust solution, it efficiently manages vast amounts of data with precision, elevating the dental surgery it serves to a pinnacle of excellence. Key features include appointment scheduling, patient records management, and real-time updates for medical practitioners.
@@ -35,63 +36,79 @@ This comprehensive project represents the culmination of year-end efforts. Desig
 Before implementing this solution, dental center operations relied heavily on manual processes for appointment scheduling, patient data recording, and treatment management. These methods were time-consuming and prone to errors, often requiring significant staff intervention.
 
 ## Operations 🔧
-- **Appointment Scheduling**: Previously handled manually by staff, doctor availability and patient appointments are now seamlessly managed through the system.
-- **Patient Records**: Medical records, once maintained manually by patients, are now securely stored and accessed digitally.
-- **Employee Management**: Streamlined employee management and pharmaceutical inventory control ensure precise record-keeping and operational efficiency.
-  
+- **Appointment Booking, viewing, searching, and canceling for patients**
+- **Medical Record viewing and downloading**
+- **Profile updating**
+- **Patient Records Management**
+- **Employee Management**
+- **View and search patient medical records for doctors**
+- **Add new medical records**
+- **View doctor schedules**
+
 The project revolutionizes dental surgery operations with a technology-driven approach to data management and healthcare provision.
 
 ## Features 🔐
-- **Captcha Integration**: Protects against bots.
-- **Password Security**: Bcrypt hashing with salting ensures secure password storage.
-- **User Validation**: Stringent username and password validation (8-12 characters with capital letters, numbers, and special characters).
-- **Input Sanitization**: Prevents malicious input, ensuring system integrity.
-- **Parametrized SQL Queries**: Guards against SQL injection attacks.
-- **Session Management**: Secure sessions with HTTPS, SameSite cookie attributes, and session timeout.
-- **MongoDB for Logging**: Tracks user login attempts securely.
-- **Database User Permissions**: Restricted access to the database based on user roles.
+- **Captcha Integration**: Protects against bots and brute-force attacks.
+- **Limited Login Attempts**: Protects against brute-force attacks.
+- **Password Security**: Bcrypt hashing with salting ensures secure password storage and encryption using a secret key before making HTTP requests.
+- **User Validation**: Validates required input fields from the backend and frontend before processing using regex.
+- **Input Sanitization**: Prevents malicious input, ensuring system integrity and XSS attack prevention.
+- **Parameterized SQL Queries**: Guards against SQL injection attacks.
+- **Session Management**: Secure sessions with HTTPS, SameSite cookie attributes, and session timeout using JWT Token with refresh token mechanism.
+- **CSRF Token Validation**: Ensures requests are coming only from the intended users.
+- **Monolog Library for Logging**: Logs all error messages with different levels (critical, warning) and information messages (e.g., login times).
+- **Database User Permissions**: Restricted access to the database based on user roles by using different users in the database.
 
 ## Technologies Used
 - **Frontend**: HTML, JavaScript, Bootstrap, CSS, Figma
-- **Backend**: PHP, MySQL, MongoDB
-- **Tools**: Visual Studio Code, WAMP server
+- **Backend**: PHP, MySQL
+- **Tools**: Visual Studio Code, PHP built-in server, WAMP server (optional)
+- **Testing**: SonarQube, SonarLint
 
+## Images 📸
+Here are some images that illustrate how error handling and database permissions are implemented:
+
+- **Database User Permissions Guest**:
+  ![Database Permissions for GUEST](Images2/guestDB.png)
+  *Description: This image showcases the setup for guest user with restricted permissions.*
+  
+- **Database User Permissions Patient**:
+  ![Database Permissions for GUEST](Images2/patientDB.png)
+  *Description: This image showcases the setup for patient user with restricted permissions.*
+  
+- **Database User Permissions Doctor**:
+  ![Database Permissions for GUEST](Images2/doctorDB.png)
+  *Description: This image showcases the setup for doctor user with restricted permissions.*
+
+- **Error Handling Example**:
+  ![Error Handling](Images2/usingParameterizedQueriesandPreparedStatmentsloggin.png)
+  *Description: Example of parameterized queries, exception handling with error logs using Monolog, categorizing errors into levels like critical, warnings, and info.*
+
+- **Input Validation front end**:
+  ![Input Validation](Images2/frontEndValidation.png)
+  *Description: Input validation process ensuring that all required fields are sanitized before processing.*
+
+- **Input Validation back end**:
+  ![Input Validation](Images2/backendValidation&InputSanitization.png)
+  *Description: Input validation process ensuring that all required fields are sanitized before processing.*
+
+- **CSRF Token mechanism**:
+  ![Input Validation](Images2/frontEndCSRF.png)
+  *Description: Generating random token and passing while saving to the session to check from the server.*
+
+- **CSRF Token mechanism**:
+  ![Input Validation](Images2/BackendCSRF.png)
+  *Description: Generating random token and passing while saving to the session to check from the server.*
+
+- **JWT Token for authentication and authorization**:
+  ![Input Validation](Images2/JWTtokenHandling.png)
+  *Description: Time out users and authorizing.*
+  
 ## Installation
-1. Clone the repository:
+1. **Clone the Repository:**
    ```bash
    git clone https://github.com/NisalWick2002/Dental-Surgery-Data-Management-System.git
    cd dental-surgery-management
+2. **Set Up the PHP Environment**
    ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Set up environment variables:
-   Create a `.env` file with the following:
-   ```env
-   DB_HOST=<your-database-host>
-   DB_USER=<your-database-user>
-   DB_PASS=<your-database-password>
-   SESSION_SECRET=<your-session-secret>
-   ```
-
-4. Start the application:
-   ```bash
-   npm start
-   ```
-
-## Usage
-1. Navigate to `http://localhost:3000`.
-2. Sign up or log in to start managing dental surgery data, including appointments and patient records.
-
-## Security Measures
-- **Password Hashing with Bcrypt**: Secure password storage with hashing and salting.
-- **Captcha**: Prevents automated login attempts.
-- **User Input Validation**: Ensures strong, secure user authentication.
-- **Database Security**: Parametrized SQL queries, transactions, and database user permissions.
-
-## Contributing
-Contributions are welcome! Please open an issue or submit a pull request.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+   php -S localhost:8000
