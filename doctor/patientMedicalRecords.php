@@ -160,23 +160,31 @@ if($loadPatientMedicalRecords):?>
     </div>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="../assets/js/sanitize.js"></script>
 <script>
     var records = <?php echo json_encode($medicalRecords); ?>;
-    console.log(records);
 
     $('.logout').click(function() {
-        $.ajax({
-            type: 'POST', 
-            url: '../user/logout.php', 
-            success: function(response) {
-                window.location.href = '../user/login.php';
-            },
-            error: function(xhr, status, error) {
-                console.error('Error occurred while logging out:', error);
-            }
-        });
-    });
+                $.ajax({
+                    type: 'POST',
+                    url: '../user/logout.php',
+                    data: {
+                        csrf_token: '<?php $_SESSION['csrf_token'] = bin2hex(random_bytes(32));echo $_SESSION['csrf_token']; ?>'
+                    },
+                    success: function(response) {
+                        window.location.href = '../user/login.php';
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to logout. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                    }
+                });
+            });
 
     function addEventListenerToButtons() {
         var buttons = document.querySelectorAll('.btn-viewrecord');
@@ -226,8 +234,8 @@ if($loadPatientMedicalRecords):?>
 
 
     document.addEventListener("DOMContentLoaded", function() {
-        var searchValue = sanitize(document.getElementById("searchValue"));
-        var  searchValue2 = sanitize(document.getElementById("searchValue2"));
+        var searchValue = document.getElementById("searchValue");
+        var  searchValue2 = document.getElementById("searchValue2");
         var tbody = document.querySelector(".table tbody");
         fillTable(records);
         addEventListenerToButtons();

@@ -215,18 +215,25 @@ if ($loadAddMedicalRecord): ?>
 
 
         $('.logout').click(function() {
-            // Send an AJAX request to logout
-            $.ajax({
-                type: 'POST', // or 'GET' depending on your server-side implementation
-                url: '../user/logout.php', // URL to your logout endpoint
-                success: function(response) {
-                    window.location.href = '../user/login.php';
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error occurred while logging out:', error);
-                }
+                $.ajax({
+                    type: 'POST',
+                    url: '../user/logout.php',
+                    data: {
+                        csrf_token: '<?php $_SESSION['csrf_token'] = bin2hex(random_bytes(32));echo $_SESSION['csrf_token']; ?>'
+                    },
+                    success: function(response) {
+                        window.location.href = '../user/login.php';
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to logout. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                    }
+                });
             });
-        });
 
         $('#date').val(getFormattedDate(new Date()));
 

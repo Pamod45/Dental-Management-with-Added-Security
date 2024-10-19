@@ -1,4 +1,5 @@
 <?php
+define('SYSTEM_INIT', true);
 header_remove("X-Powered-By");
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
@@ -10,12 +11,15 @@ if ($_SERVER['REQUEST_METHOD'] != "POST" || !isset($_SERVER['HTTP_REFERER']) || 
     exit();
 }
 
-require("../config/guestDBConnection.php");
-require("../vendor/autoload.php");
-require('../config/logger.php');
-require('../vendor/autoload.php');
+require "../config/guestDBConnection.php";
+require "../vendor/autoload.php";
+require '../config/logger.php';
+require '../vendor/autoload.php';
+require '../config/decrypt.php';
+use Dotenv\Dotenv;
 
 $logger = createLogger('guest.log');
+$key = '12345678901234567890123456789012';
 
 use \Firebase\JWT\JWT;
 
@@ -56,7 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 
     // Check reCAPTCHA response
-    $recaptchaSecret = '6LekfF8qAAAAAJbchVG_vTMi2m__06WZFgNRZmeu'; // Replace with your actual secret key
+    $dotenv = Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+    $recaptchaSecret = $_ENV['RECPATCHA_KEY']; // Replace with your actual secret key
     $recaptchaResponse = $_POST['g-recaptcha-response'];
 
     // Verify the reCAPTCHA response
@@ -85,22 +91,34 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     // If user exists
     if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
-        // Verify the password using password_verify
-        if (password_verify($_POST['txtpassword'], $row['password'])) {
+        $sentPassword = decryptData($_POST['txtpassword'], $key);
+        if (password_verify($sentPassword, $row['password'])) {
             // Create JWT token
             $key = "abcd4658hj^"; // Your secret key
-            $payload = [
+            $accessTokenPayload = [
                 'iat' => time(), // Issued at: time when the token is generated
+                'exp' => time() + (15 * 60), // Expiration time: 15 minutes from now
+                'userid' => $row['userid'],
+                'usertype' => $row['usertype']
+            ];
+
+            // Generate the access token
+            $accessToken = JWT::encode($accessTokenPayload, $key, 'HS256');
+
+            // Create JWT refresh token with a longer expiration time (e.g., 1 hour)
+            $refreshTokenPayload = [
+                'iat' => time(),
                 'exp' => time() + (60 * 60), // Expiration time: 1 hour from now
                 'userid' => $row['userid'],
                 'usertype' => $row['usertype']
             ];
 
-            // Generate JWT
-            $jwt = JWT::encode($payload, $key, 'HS256');
+            // Generate the refresh token
+            $refreshToken = JWT::encode($refreshTokenPayload, $key, 'HS256');
 
-            // Set the JWT as a cookie
-            setcookie('jwtToken', $jwt, time() + (60 * 60), "/", "", true, true);
+            // Set the tokens as cookies
+            setcookie('jwtToken', $accessToken, time() + (15 * 60), "/", "", true, true); // Access token expires in 15 minutes
+            setcookie('refreshToken', $refreshToken, time() + (60 * 60), "/", "", true, true);
 
             // Regenerate session ID to prevent session fixation
             session_regenerate_id(true);
@@ -123,15 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     break;
                 case "Doctor":
                     $redirectUrl = '../doctor/dashboard.php';
-                    break;
-                case "Employee":
-                    $query2 = "SELECT (SELECT Position FROM employee_type WHERE emptypeid=e.emptypeid) AS position FROM pdms.employee e WHERE userid=?";
-                    $query2Stmt = $con->prepare($query2);
-                    $query2Stmt->bind_param("s", $username);
-                    $query2Stmt->execute();
-                    $result2 = $query2Stmt->get_result();
-                    $row2 = $result2->fetch_assoc();
-                    $redirectUrl = ($row2['position'] == "CounterStaff") ? '../Employee/dashboard.php' : '../branchManagerUI/dashboard.php';
                     break;
             }
             $logger->info('User ' . $username . ' logged in successfully.');

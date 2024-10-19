@@ -185,17 +185,25 @@ if ($doctorSchedule): ?>
 
     <script>
         $('.logout').click(function() {
-            $.ajax({
-                type: 'POST',
-                url: '../user/logout.php',
-                success: function(response) {
-                    window.location.href = '../user/login.php';
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error occurred while logging out:', error);
-                }
+                $.ajax({
+                    type: 'POST',
+                    url: '../user/logout.php',
+                    data: {
+                        csrf_token: '<?php $_SESSION['csrf_token'] = bin2hex(random_bytes(32));echo $_SESSION['csrf_token']; ?>'
+                    },
+                    success: function(response) {
+                        window.location.href = '../user/login.php';
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to logout. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                    }
+                });
             });
-        });
 
         function getDateWeek(date) {
             const currentDate =

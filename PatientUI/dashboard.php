@@ -4,11 +4,10 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', '../logs/uncaught_errors.log');
 
-include('../config/fatalErrorWarningHandler.php');
-include('patientAccessControl.php');
-include('authorizePatientAccess.php');
-require("../config/patientDBConnection.php");
-require('../config/logger.php');
+require '../config/fatalErrorWarningHandler.php';
+require 'patientAccessControl.php';
+require "../config/patientDBConnection.php";
+require '../config/logger.php' ;
 
 $loadDashBoard = false;
 $logger = createLogger('patient.log');
@@ -17,7 +16,7 @@ try {
     // $jsonResult = json_encode($result);
     $authorizedUser = authorizePatientAccess();
     if (!$authorizedUser) {
-        throw new Exception('User not authorized.');
+        throw new Exception('User not authorized.',403);
     }
     $con = getDatabaseConnection();
     if (!$con) {
@@ -101,14 +100,14 @@ try {
     }
     $loadDashBoard = true;
 } catch (Throwable $e) {
-    if($logger)
+    if ($logger)
         $logger->critical('Error occurred: ' . $e->getMessage());
     http_response_code($e->getCode() ? $e->getCode() : 500);
     echo '
     <h1>Something went wrong</h1>
     <p>' . htmlspecialchars($e->getMessage()) . '</p>
     ';
-} 
+}
 if ($loadDashBoard): ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -226,18 +225,22 @@ if ($loadDashBoard): ?>
 
         <script>
             $('.logout').click(function() {
-                // Send an AJAX request to logout
                 $.ajax({
                     type: 'POST',
                     url: '../user/logout.php',
                     data: {
-                        csrf_token: $('#csrf_token').val()
+                        csrf_token: '<?php $_SESSION['csrf_token'] = bin2hex(random_bytes(32));echo $_SESSION['csrf_token']; ?>'
                     },
                     success: function(response) {
                         window.location.href = '../user/login.php';
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error occurred while logging out:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to logout. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
                     }
                 });
             });

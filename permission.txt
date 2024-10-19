@@ -1,8 +1,0 @@
-Table	        Operations Needed	        Purpose
-appointment	    SELECT, INSERT, DELETE	    Managing patient appointments
-patient	        SELECT	                    Verifying and retrieving patient details
-paymentmethod	SELECT	                    Fetching payment method details
-doctor	        SELECT	                    Fetching doctor details for appointments and records
-schedule	    SELECT	                    Checking doctor's available slots
-medicalrecord	SELECT	                    Viewing patient’s medical history
-user	        SELECT,UPDATE           	Validating user and updating password

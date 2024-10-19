@@ -4,11 +4,10 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', '../logs/uncaught_errors.log');
 
-include('../config/fatalErrorWarningHandler.php');
-include('patientAccessControl.php');
-include('authorizePatientAccess.php');
-require("../config/patientDBConnection.php");
-require('../config/logger.php');
+require '../config/fatalErrorWarningHandler.php';
+require 'patientAccessControl.php';
+require "../config/patientDBConnection.php";
+require '../config/logger.php' ;
 
 $logger = createLogger('patient.log');
 header('Content-Type: application/json');

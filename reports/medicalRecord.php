@@ -6,7 +6,6 @@ ini_set('error_log', '../logs/uncaught_errors.log');
 
 include('../config/fatalErrorWarningHandler.php');
 include('../patientUI/patientAccessControl.php');
-include('../patientUI/authorizePatientAccess.php');
 require("../config/patientDBConnection.php");
 require('../config/logger.php');
 

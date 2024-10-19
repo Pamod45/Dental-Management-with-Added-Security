@@ -4,11 +4,10 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', '../logs/uncaught_errors.log');
 
-include('../config/fatalErrorWarningHandler.php');
-include('patientAccessControl.php');
-include('authorizePatientAccess.php');
-require("../config/patientDBConnection.php");
-require('../config/logger.php');
+require '../config/fatalErrorWarningHandler.php';
+require 'patientAccessControl.php';
+require "../config/patientDBConnection.php";
+require '../config/logger.php' ;
 
 $loadNewAppointmentUI = false;
 $logger = createLogger('patient.log');
@@ -23,7 +22,7 @@ try {
     }
     $authorizedUser = authorizePatientAccess();
     if (!$authorizedUser) {
-        throw new Exception('User not authorized.');
+        throw new Exception('User not authorized.',403);
     }
     $con = getDatabaseConnection();
     if (!$con) {
@@ -214,15 +213,22 @@ if ($loadNewAppointmentUI): ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.js"></script>
     <script>
         $('.logout').click(function() {
-            // Send an AJAX request to logout
             $.ajax({
-                type: 'POST', // or 'GET' depending on your server-side implementation
-                url: '../user/logout.php', // URL to your logout endpoint
+                type: 'POST', 
+                url: '../user/logout.php',
+                data:{
+                    csrf_token: '<?php $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); echo $_SESSION['csrf_token']; ?>'
+                },
                 success: function(response) {
                     window.location.href = '../user/login.php';
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error occurred while logging out:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to logout. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
                 }
             });
         });

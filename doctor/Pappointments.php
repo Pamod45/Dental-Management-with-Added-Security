@@ -166,20 +166,30 @@ if ($loadMyAppointmentsUI) : ?>
         </div>
 
     </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <?php include("../config/includes.php"); ?>
     <script>
         $('.logout').click(function() {
-            $.ajax({
-                type: 'POST',
-                url: '../user/logout.php',
-                success: function(response) {
-                    window.location.href = '../user/login.php';
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error occurred while logging out:', error);
-                }
+                $.ajax({
+                    type: 'POST',
+                    url: '../user/logout.php',
+                    data: {
+                        csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+                    },
+                    success: function(response) {
+                        window.location.href = '../user/login.php';
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to logout. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                    }
+                });
             });
-        });
 
 
         document.addEventListener("DOMContentLoaded", function() {

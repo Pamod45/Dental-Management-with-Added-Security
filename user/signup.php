@@ -1,14 +1,17 @@
 <?php
+define('SYSTEM_INIT', true);
 header_remove("X-Powered-By");
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', '../logs/uncaught_errors.log');
 
-require("../config/guestDBConnection.php");
-require("../vendor/autoload.php");
-require('../config/logger.php');
-
+require "../config/guestDBConnection.php";
+require "../vendor/autoload.php";
+require '../config/logger.php';
+require '../config/decrypt.php';
+use Dotenv\Dotenv;
 $logger = createLogger('guest.log');
+$key = '12345678901234567890123456789012';
 
 if (isset($_POST['register'])) {
     $con = getDatabaseConnection();
@@ -19,11 +22,24 @@ if (isset($_POST['register'])) {
     $con->begin_transaction();
 
     try {
+        $trustedOrigin = 'http://localhost:3000';
+        $trustedReferrer = 'http://localhost:3000/user/signup.php';
+    
+        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+        $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+    
+        if (
+            parse_url($origin, PHP_URL_HOST) !== parse_url($trustedOrigin, PHP_URL_HOST) ||
+            parse_url($referrer, PHP_URL_HOST) !== parse_url($trustedReferrer, PHP_URL_HOST)
+        ) {
+            throw new Exception('Invalid referer/origin',403);
+        }
         if (!$logger) {
             throw new Exception('Failed to create logger instance.', 500);
         }
-
-        $recaptchaSecret = '6LekfF8qAAAAAJbchVG_vTMi2m__06WZFgNRZmeu';
+        $dotenv = Dotenv::createImmutable(__DIR__);
+        $dotenv->load();
+        $recaptchaSecret = $_ENV['RECPATCHA_KEY'];
         $recaptchaResponse = $_POST['g-recaptcha-response'];
 
         $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaResponse");
@@ -33,13 +49,14 @@ if (isset($_POST['register'])) {
             echo json_encode(['success' => false, 'message' => 'Please confirm you are not a robot.']);
             exit();
         }
-
         $password = $con->real_escape_string($_POST['password']);
-        $confirmPassword = $con->real_escape_string($_POST['confirm_password']); // Capture the confirm password
+        $password = decryptData($password, $key);
+        $confirmPassword = $con->real_escape_string($_POST['confirm_password']);
+        $confirmPassword = decryptData($confirmPassword, $key);
         $usertype = 'Patient';
         $registereddate = date('Y-m-d');
         $loginstatus = 0;
-
+        
         if ($password !== $confirmPassword) {
             throw new Exception("Passwords do not match.");
         }
@@ -48,10 +65,8 @@ if (isset($_POST['register'])) {
             throw new Exception("Password must be 8-20 characters long, contain at least one uppercase letter, one lowercase letter, one special character, and one number.");
         }
 
-        // Password hashing with salt
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        // Retrieve max user ID
         $query_userid = "SELECT MAX(userid) as max_userid FROM user";
         $result_userid = $con->query($query_userid);
         $row_userid = $result_userid->fetch_assoc();
@@ -142,6 +157,8 @@ if (isset($_POST['register'])) {
     } catch (Exception $e) {
         // Roll back the transaction in case of error
         $con->rollback();
+        if ($logger)
+            $logger->error($e->getMessage());
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
     exit;
@@ -224,8 +241,17 @@ if (isset($_POST['register'])) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <script>
+        function encryptData(data, secretKey) {
+            var iv = CryptoJS.lib.WordArray.random(16);
+            var key = CryptoJS.enc.Utf8.parse(secretKey);
+            var encrypted = CryptoJS.AES.encrypt(data, key, {
+                iv: iv
+            });
+            return CryptoJS.enc.Base64.stringify(iv.concat(encrypted.ciphertext));
+        }
         $(document).ready(function() {
             $("#registerButton").click(function() {
                 // Get values from input fields
@@ -288,7 +314,7 @@ if (isset($_POST['register'])) {
                     });
                     return;
                 }
-                if(!dob){
+                if (!dob) {
                     Swal.fire({
                         title: 'Error',
                         text: 'Date of birth is required.',
@@ -332,7 +358,7 @@ if (isset($_POST['register'])) {
                     });
                     return;
                 }
-                if(password!==confirmpassword){
+                if (password !== confirmpassword) {
                     Swal.fire({
                         title: 'Error',
                         text: 'Password and confirm passwords do not match.',
@@ -341,6 +367,17 @@ if (isset($_POST['register'])) {
                     });
                     return;
                 }
+                if (!captchaResponse) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Please verify that you are not a robot.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    grecaptcha.reset()
+                    return;
+                }
+                const key = '12345678901234567890123456789012'; // 32-byte key for AES-256
                 $.ajax({
                     url: "signup.php",
                     method: "POST",
@@ -351,10 +388,14 @@ if (isset($_POST['register'])) {
                         email: email,
                         dob: dob,
                         address: address,
-                        password: password,
-                        confirm_password: confirmpassword, // Corrected variable name
+                        password: encryptData(password, key),
+                        confirm_password: encryptData(confirmpassword, key), // Corrected variable name
                         'g-recaptcha-response': captchaResponse, // Include reCAPTCHA response
                         register: true
+                    },
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     success: function(data) {
                         var response = JSON.parse(data);
@@ -362,7 +403,7 @@ if (isset($_POST['register'])) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Registration Successful',
-                                text: 'You can now log in!',
+                                text: 'You can now log in with User ID: ' + response.userid,
                             }).then(() => {
                                 window.location.href = 'login.php'; // Redirect after successful registration
                             });

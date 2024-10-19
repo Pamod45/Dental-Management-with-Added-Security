@@ -62,9 +62,17 @@
             </div>
         </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
     <script>
+        function encryptData(data, secretKey) {
+            var iv = CryptoJS.lib.WordArray.random(16);
+            var key = CryptoJS.enc.Utf8.parse(secretKey);
+            var encrypted = CryptoJS.AES.encrypt(data, key, {
+                iv: iv
+            });
+            return CryptoJS.enc.Base64.stringify(iv.concat(encrypted.ciphertext));
+        }
         var validusername = false;
         var validpassword = false;
 
@@ -140,12 +148,13 @@
             if (isValidInput()) {
                 var uname = $('#username').val();
                 var pas = $('#password').val();
+                const key = '12345678901234567890123456789012';
                 $.ajax({
                     type: 'POST',
                     url: 'processLogin.php',
                     data: {
                         txtusername: uname,
-                        txtpassword: pas,
+                        txtpassword: encryptData(pas, key),
                         'g-recaptcha-response': grecaptcha.getResponse()
                     },
                     dataType: 'json',

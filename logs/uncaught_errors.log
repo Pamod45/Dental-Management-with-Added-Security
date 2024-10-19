@@ -102,3 +102,19 @@ Stack trace:
 Stack trace:
 #0 {main}
   thrown in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\doctor\medicalRecord.php on line 12
+[19-Oct-2024 05:05:06 Asia/Colombo] PHP Warning:  Undefined variable $12345678901234567890123456789012 in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\user\signup.php on line 41
+[19-Oct-2024 05:05:06 Asia/Colombo] PHP Stack trace:
+[19-Oct-2024 05:05:06 Asia/Colombo] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\user\signup.php:0
+[19-Oct-2024 05:05:06 Asia/Colombo] PHP Deprecated:  openssl_decrypt(): Passing null to parameter #3 ($passphrase) of type string is deprecated in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\decrypt.php on line 13
+[19-Oct-2024 05:05:06 Asia/Colombo] PHP Stack trace:
+[19-Oct-2024 05:05:06 Asia/Colombo] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\user\signup.php:0
+[19-Oct-2024 05:05:06 Asia/Colombo] PHP   2. decryptData($encryptedData = 'vxogmtOGYTDkCx9MtNVnwBTUEIDVOP4LnFqR+C9MBCw=', $secretKey = NULL) E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\user\signup.php:41
+[19-Oct-2024 05:05:06 Asia/Colombo] PHP   3. openssl_decrypt($data = '\024Ô\020€Õ8þ\vœZ‘ø/L\004,', $cipher_algo = 'aes-256-cbc', $passphrase = '[Sensitive Parameter]', $options = 1, $iv = '¿\032 šÓ†a0ä\v\037L´ÕgÀ') E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\decrypt.php:13
+[19-Oct-2024 05:06:04 Asia/Colombo] PHP Warning:  Undefined variable $12345678901234567890123456789012 in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\user\signup.php on line 41
+[19-Oct-2024 05:06:04 Asia/Colombo] PHP Stack trace:
+[19-Oct-2024 05:06:04 Asia/Colombo] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\user\signup.php:0
+[19-Oct-2024 05:06:04 Asia/Colombo] PHP Deprecated:  openssl_decrypt(): Passing null to parameter #3 ($passphrase) of type string is deprecated in E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\decrypt.php on line 13
+[19-Oct-2024 05:06:04 Asia/Colombo] PHP Stack trace:
+[19-Oct-2024 05:06:04 Asia/Colombo] PHP   1. {main}() E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\user\signup.php:0
+[19-Oct-2024 05:06:04 Asia/Colombo] PHP   2. decryptData($encryptedData = 'cQWPfXRN6PApCiDKOPI+y7wIs2eg9yEgQ13YGRchTTE=', $secretKey = NULL) E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\user\signup.php:41
+[19-Oct-2024 05:06:04 Asia/Colombo] PHP   3. openssl_decrypt($data = '¼\b³g ÷! C]Ø\031\027!M1', $cipher_algo = 'aes-256-cbc', $passphrase = '[Sensitive Parameter]', $options = 1, $iv = 'q\005}tMèð)\n Ê8ò>Ë') E:\Users\pubup\One Drive\OneDrive\Desktop\software security\Assessment4\Dental Surgery Management System - Monday\config\decrypt.php:13

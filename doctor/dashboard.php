@@ -234,17 +234,26 @@ if($loadDashBoard):?>
         </div>
     
         <?php include("../config/includes.php"); ?>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
             $('.logout').click(function() {
-                // Send an AJAX request to logout
                 $.ajax({
-                    type: 'POST', // or 'GET' depending on your server-side implementation
-                    url: '../user/logout.php', // URL to your logout endpoint
+                    type: 'POST',
+                    url: '../user/logout.php',
+                    data: {
+                        csrf_token: '<?php $_SESSION['csrf_token'] = bin2hex(random_bytes(32));echo $_SESSION['csrf_token']; ?>'
+                    },
                     success: function(response) {
                         window.location.href = '../user/login.php';
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error occurred while logging out:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to logout. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
                     }
                 });
             });

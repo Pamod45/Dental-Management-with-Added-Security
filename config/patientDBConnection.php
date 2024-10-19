@@ -1,5 +1,6 @@
 <?php
-
+require '../vendor/autoload.php'; 
+use Dotenv\Dotenv;
 /**
  * Function to create.
  * Returns the connection object if successful, or false if the connection fails.
@@ -8,10 +9,12 @@
  */
 function getDatabaseConnection()
 {
-    $server = "localhost";
-    $username = "patient_user";
-    $password = "dkjk@dfdjfdjfkHDHD56";
-    $db = "pdms";
+    $dotenv = Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+    $server = $_ENV['DB_HOST'];
+    $username = $_ENV['DB_USER_PATIENT'];
+    $password = $_ENV['DB_PASSWORD_PATIENT'];
+    $db = $_ENV['DB_NAME'];
 
     try {
         $con = new mysqli($server, $username, $password, $db);
