@@ -1,8 +1,8 @@
 # Dental-Management-with-Added-Security
 
 ## Contributors 🏅
-* [Pubudu Perera](https://github.com/Pamod45)
 * [Vishan Perera](https://github.com/VishanPerera)
+* [Nisal Wickramaarachchi](https://github.com/NisalWick2002)
 
 ## Project Overview 📋
 The **Dental Surgery Data Management System** is an extensive project utilizing HTML, JavaScript, Bootstrap, CSS, PHP, MySQL, Figma, Visual Studio Code, and WAMP server. This system streamlines the management of appointments, patient records, and other critical dental surgery operations, enhancing productivity and efficiency.Authentication, authorization, Integrity are all maintained with enhance security features.
